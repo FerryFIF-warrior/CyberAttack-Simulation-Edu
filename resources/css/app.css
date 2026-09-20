@@ -4,6 +4,59 @@
 @source '../../storage/framework/views/*.php';
 
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+    /* Palet Security Cat */
+    --color-cat-bg: #0a0e15;
+    --color-cat-surface: #0f1520;
+    --color-cat-card: #131a26;
+    --color-cat-line: #1f2937;
+    --color-cat-muted: #8b98ab;
+    --color-cat-cyan: #00e5ff;
+    --color-cat-green: #34d399;
+}
+
+@layer base {
+    body {
+        @apply bg-cat-bg font-sans text-slate-300 antialiased;
+    }
+}
+
+@layer components {
+    .cat-card {
+        @apply rounded-xl border border-cat-line bg-cat-card;
+    }
+
+    .cat-tag {
+        @apply inline-flex items-center gap-1.5 rounded-md border border-cat-cyan/20 bg-cat-cyan/10 px-2 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-wider text-cat-cyan;
+    }
+
+    .cat-label {
+        @apply font-mono text-[11px] uppercase tracking-wider text-cat-muted;
+    }
+
+    .cat-btn {
+        @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition;
+    }
+
+    .cat-btn-primary {
+        @apply cat-btn bg-cat-cyan text-cat-bg hover:brightness-110;
+    }
+
+    .cat-btn-ghost {
+        @apply cat-btn border border-cat-line bg-cat-card text-slate-200 hover:border-cat-cyan/40;
+    }
+
+    .cat-dots {
+        background-image: radial-gradient(rgb(255 255 255 / 0.06) 1px, transparent 1px);
+        background-size: 22px 22px;
+    }
+
+    .cat-hero-glow {
+        background:
+            radial-gradient(60% 50% at 75% 20%, rgb(0 229 255 / 0.10), transparent 70%),
+            radial-gradient(40% 40% at 10% 0%, rgb(52 211 153 / 0.06), transparent 70%);
+    }
 }
