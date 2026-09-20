@@ -1,0 +1,1 @@
+<x-landing :labs="$labs" />

@@ -9,7 +9,6 @@ class DashboardController extends Controller
 {
     public function __invoke(): View
     {
-        // Progres dummy mahasiswa. Ganti dengan query ke tabel progress bila sudah ada.
         $progress = [
             'phishing' => ['status' => 'selesai', 'score' => 92, 'completed_at' => '2026-04-02'],
             'brute-force' => ['status' => 'selesai', 'score' => 88, 'completed_at' => '2026-03-20'],
@@ -27,7 +26,7 @@ class DashboardController extends Controller
 
         return view('dashboard', [
             'student' => [
-                'name' => 'Mahasiswa D3 TI UNS',
+                'name' => auth()->user()->callsign,
                 'nim' => 'K3123001',
                 'semester' => 'Semester Genap 2025/2026',
             ],
