@@ -1,0 +1,27 @@
+import "../css/app.css";
+import { createInertiaApp } from "@inertiajs/react";
+import { resolvePageComponent } from "laravel-vite-plugin/inertia-helpers";
+import { createRoot } from "react-dom/client";
+
+const pages = import.meta.glob("./Pages/**/*.{jsx,tsx}");
+
+createInertiaApp({
+  resolve: (name) => {
+    const pagePath = [`./Pages/${name}.tsx`, `./Pages/${name}.jsx`].find(
+      (path) => path in pages,
+    );
+
+    if (!pagePath) {
+      throw new Error(`Inertia page not found: ${name}`);
+    }
+
+    return resolvePageComponent(pagePath, pages) as any;
+  },
+  setup({ el, App, props }) {
+    const root = createRoot(el as HTMLElement);
+    root.render(<App {...props} />);
+  },
+  progress: {
+    color: "#4F46E5",
+  },
+});
