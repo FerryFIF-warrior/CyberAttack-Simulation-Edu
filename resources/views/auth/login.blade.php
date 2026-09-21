@@ -81,8 +81,8 @@
                                 for="passkey-input">
                                 Kunci Sandi // Passkey
                             </label>
-                            <a class="font-code-sm text-code-sm text-primary-fixed-dim hover:text-primary transition-colors duration-200 cursor-help"
-                                href="#" title="Fitur reset passkey menyusul (Fase 8 planning)">Lupa Passkey?</a>
+                            <a class="font-code-sm text-code-sm text-primary-fixed-dim hover:text-primary transition-colors duration-200"
+                                href="{{ route('password.request') }}">Lupa Passkey?</a>
                         </div>
                         <div class="relative flex items-center group">
                             <span

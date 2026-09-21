@@ -9,7 +9,6 @@ export function useKeyboardMovement(
 
     const handleKeyDown = (event: KeyboardEvent) => {
       const key = event.key.toLowerCase();
-      console.log('[useKeyboardMovement] Key pressed:', key, 'enabled:', enabled); // Debug
 
       if (["arrowup", "w"].includes(key)) {
         event.preventDefault();

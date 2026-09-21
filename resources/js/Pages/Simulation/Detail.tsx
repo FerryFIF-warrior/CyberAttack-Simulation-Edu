@@ -15,12 +15,13 @@ interface SimulationDetailProps {
     }[];
 }
 
-const simulationInfo: Record<string, { name: string; color: string; bgColor: string; borderColor: string; icon: React.ReactNode; description: string }> = {
+const simulationInfo: Record<string, { name: string; color: string; bgColor: string; borderColor: string; gradient: string; icon: React.ReactNode; description: string }> = {
     phishing: {
         name: "Phishing",
         color: "indigo",
         bgColor: "bg-indigo-50",
         borderColor: "border-indigo-200",
+        gradient: "to-indigo-50",
         icon: (
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-10 h-10 text-indigo-600" aria-hidden="true">
                 <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8" />
@@ -37,6 +38,7 @@ const simulationInfo: Record<string, { name: string; color: string; bgColor: str
         color: "orange",
         bgColor: "bg-orange-50",
         borderColor: "border-orange-200",
+        gradient: "to-orange-50",
         icon: (
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-10 h-10 text-orange-600" aria-hidden="true">
                 <rect x="2" y="2" width="20" height="20" rx="2" />
@@ -53,6 +55,7 @@ const simulationInfo: Record<string, { name: string; color: string; bgColor: str
         color: "red",
         bgColor: "bg-red-50",
         borderColor: "border-red-200",
+        gradient: "to-red-50",
         icon: (
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-10 h-10 text-red-600" aria-hidden="true">
                 <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
@@ -69,6 +72,7 @@ const simulationInfo: Record<string, { name: string; color: string; bgColor: str
         color: "purple",
         bgColor: "bg-purple-50",
         borderColor: "border-purple-200",
+        gradient: "to-purple-50",
         icon: (
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-10 h-10 text-purple-600" aria-hidden="true">
                 <rect x="2" y="2" width="20" height="20" rx="2" />
@@ -165,7 +169,7 @@ export default function SimulationDetail({ simulationId, levels }: SimulationDet
     const overallProgress = maxTotalScore > 0 ? Math.round((totalScore / maxTotalScore) * 100) : 0;
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-[info.color]-50 py-12 px-4 sm:px-6 lg:px-8">
+        <div className={`min-h-screen bg-gradient-to-br from-gray-50 via-white ${info.gradient} py-12 px-4 sm:px-6 lg:px-8`}>
             <Head title={`Simulasi ${info.name}`} />
             <div className="max-w-4xl mx-auto">
                 {/* Header */}

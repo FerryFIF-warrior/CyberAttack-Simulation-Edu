@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Support\LabCatalog;
 use Illuminate\View\View;
 
 class DashboardController extends Controller
@@ -11,12 +10,18 @@ class DashboardController extends Controller
     {
         $progress = [
             'phishing' => ['status' => 'selesai', 'score' => 92, 'completed_at' => '2026-04-02'],
-            'brute-force' => ['status' => 'selesai', 'score' => 88, 'completed_at' => '2026-03-20'],
-            'sql-injection' => ['status' => 'berjalan', 'score' => null, 'completed_at' => null],
+            'bruteforce' => ['status' => 'selesai', 'score' => 88, 'completed_at' => '2026-03-20'],
+            'sqli' => ['status' => 'berjalan', 'score' => null, 'completed_at' => null],
+            'auth' => ['status' => 'berjalan', 'score' => null, 'completed_at' => null],
         ];
 
-        $modules = collect(LabCatalog::all())
-            ->map(fn (array $lab) => $lab + $progress[$lab['slug']])
+        $modules = collect(config('simulation.labs'))
+            ->map(fn (array $lab) => $lab + ($progress[$lab['slug']] ?? [
+                'status' => 'berjalan',
+                'score' => null,
+                'completed_at' => null,
+            ]))
+            ->values()
             ->all();
 
         $total = count($modules);

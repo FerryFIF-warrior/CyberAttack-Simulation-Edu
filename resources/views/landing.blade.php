@@ -156,7 +156,7 @@
 
         {{-- CTA --}}
         <section class="mx-auto max-w-5xl px-6 pb-20">
-            <div class="cat-card relative overflow-hidden bg-linear-to-br from-cat-card to-cat-cyan/10 p-8 sm:p-10">
+            <div class="cat-card relative overflow-hidden bg-gradient-to-br from-cat-card to-cat-cyan/10 p-8 sm:p-10">
                 <div class="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
                     <div class="max-w-md">
                         <span class="cat-tag">Universitas Sebelas Maret PSDKU Madiun</span>

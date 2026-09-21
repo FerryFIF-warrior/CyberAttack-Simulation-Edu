@@ -1,12 +1,10 @@
 import type { FC } from "react";
-import { Link } from "@inertiajs/react";
 
 interface PointSummaryProps {
   floorPoints: number;
   isLastFloor: boolean;
   totalLevelPoints?: number;
   maxLevelPoints?: number;
-  simulationId: string;
   level: number;
   nextFloor?: number;
   onContinue: () => void;
@@ -18,7 +16,6 @@ export const PointSummary: FC<PointSummaryProps> = ({
   isLastFloor,
   totalLevelPoints,
   maxLevelPoints,
-  simulationId,
   level,
   nextFloor,
   onContinue,
@@ -49,15 +46,7 @@ export const PointSummary: FC<PointSummaryProps> = ({
         )}
 
         <div className="flex gap-3 w-full max-w-md justify-center">
-          {isLastFloor ? (
-            <Link
-              href={`/simulasi/${simulationId}/level/${level}`}
-              onClick={onContinue}
-              className="flex-1 px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors text-center font-medium shadow-sm"
-            >
-              Kembali ke Level
-            </Link>
-          ) : nextFloor ? (
+          {nextFloor ? (
             <button
               type="button"
               onClick={onContinue}
@@ -66,13 +55,13 @@ export const PointSummary: FC<PointSummaryProps> = ({
               Lanjut ke Floor {nextFloor}
             </button>
           ) : (
-            <Link
-              href={`/simulasi/${simulationId}/level/${level}`}
+            <button
+              type="button"
               onClick={onContinue}
               className="flex-1 px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors text-center font-medium shadow-sm"
             >
-              Kembali ke Level
-            </Link>
+              Selesai
+            </button>
           )}
         </div>
       </div>

@@ -23,7 +23,6 @@ const simulations = [
         borderColor: "border-indigo-200",
         badgeColor: "bg-indigo-100 text-indigo-800",
         progressColor: "bg-indigo-600",
-        enabled: true,
         href: "/simulasi/phishing",
     },
     {
@@ -36,8 +35,7 @@ const simulations = [
         borderColor: "border-orange-200",
         badgeColor: "bg-orange-100 text-orange-800",
         progressColor: "bg-orange-600",
-        enabled: false,
-        comingSoon: true,
+        href: "/simulasi/bruteforce",
     },
     {
         id: "sqli",
@@ -49,8 +47,7 @@ const simulations = [
         borderColor: "border-red-200",
         badgeColor: "bg-red-100 text-red-800",
         progressColor: "bg-red-600",
-        enabled: false,
-        comingSoon: true,
+        href: "/simulasi/sqli",
     },
     {
         id: "auth",
@@ -62,8 +59,7 @@ const simulations = [
         borderColor: "border-purple-200",
         badgeColor: "bg-purple-100 text-purple-800",
         progressColor: "bg-purple-600",
-        enabled: false,
-        comingSoon: true,
+        href: "/simulasi/auth",
     },
 ] as const;
 
@@ -207,14 +203,10 @@ export default function SimulationsIndex({ phishingProgress }: SimulationsIndexP
                     {simulations.map((sim) => (
                         <article
                             key={sim.id}
-                            className={`relative group transition-all duration-300 ${
-                                sim.enabled ? "hover:-translate-y-1 hover:shadow-2xl" : "opacity-60 cursor-not-allowed"
-                            }`}
+                            className="relative group transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
                         >
                             <Card
-                                className={`${sim.bgColor} ${sim.borderColor} h-full flex flex-col rounded-3xl shadow-lg hover:shadow-xl transition-shadow duration-300 ${
-                                    sim.enabled ? "" : "grayscale"
-                                }`}
+                                className={`${sim.bgColor} ${sim.borderColor} h-full flex flex-col rounded-3xl shadow-lg hover:shadow-xl transition-shadow duration-300`}
                                 padding="lg"
                             >
                                 {/* Icon Header */}
@@ -222,11 +214,6 @@ export default function SimulationsIndex({ phishingProgress }: SimulationsIndexP
                                     <div className={`p-3 rounded-2xl ${sim.badgeColor} shadow-sm`}>
                                         <sim.icon className="w-8 h-8" />
                                     </div>
-                                    {!sim.enabled && (
-                                        <span className="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-600 rounded-full">
-                                            Coming Soon
-                                        </span>
-                                    )}
                                 </div>
 
                                 {/* Title & Description */}
@@ -288,40 +275,16 @@ export default function SimulationsIndex({ phishingProgress }: SimulationsIndexP
                                     </div>
                                 )}
 
-                                {/* Disabled State Overlay */}
-                                {!sim.enabled && (
-                                    <div className="absolute inset-0 bg-white/50 rounded-xl flex items-center justify-center pointer-events-none">
-                                        <div className="text-center p-4">
-                                            <svg className="w-12 h-12 mx-auto text-gray-300 mb-2" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24" aria-hidden="true">
-                                                <rect x="2" y="2" width="20" height="20" rx="2" />
-                                                <path d="M12 10v4" />
-                                                <path d="M10 12h4" />
-                                            </svg>
-                                            <p className="text-gray-500 font-medium">Belum Tersedia</p>
-                                            <p className="text-xs text-gray-400 mt-1">Segera hadir</p>
-                                        </div>
-                                    </div>
-                                )}
-
                                 {/* Action Button */}
                                 <div className="mt-auto pt-4">
-                                    {sim.enabled ? (
-                                        <Link href={sim.href}>
-                                            <Button variant="primary" className="w-full px-6 py-3 text-lg">
-                                                Mulai Simulasi
-                                                <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                                                </svg>
-                                            </Button>
-                                        </Link>
-                                    ) : (
-                                        <Button variant="ghost" className="w-full text-gray-400 border-gray-200" disabled>
-                                            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                    <Link href={sim.href}>
+                                        <Button variant="primary" className="w-full px-6 py-3 text-lg">
+                                            Mulai Simulasi
+                                            <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
                                             </svg>
-                                            Coming Soon
                                         </Button>
-                                    )}
+                                    </Link>
                                 </div>
                             </Card>
                         </article>
@@ -330,7 +293,7 @@ export default function SimulationsIndex({ phishingProgress }: SimulationsIndexP
 
                 {/* Footer Info */}
                 <div className="mt-12 text-center text-sm text-gray-500">
-                    <p>Hanya simulasi <strong className="text-indigo-600">Phishing</strong> yang aktif saat ini. Simulasi lain akan dibuka secara bertahap.</p>
+                    <p>Semua modul simulasi terbuka. Konten gameplay interaktif saat ini aktif penuh untuk <strong className="text-indigo-600">Phishing</strong>; modul lainnya sedang diisi bertahap.</p>
                 </div>
             </div>
         </div>

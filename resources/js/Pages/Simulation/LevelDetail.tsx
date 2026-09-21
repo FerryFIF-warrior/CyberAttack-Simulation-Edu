@@ -5,7 +5,6 @@ interface LevelDetailProps {
   simulationId: string;
   level: number;
   maxScore: number;
-  floorCount: number;
   unlocked: boolean;
   completed: boolean;
   levelScore?: number;

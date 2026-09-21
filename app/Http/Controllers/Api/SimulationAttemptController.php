@@ -5,14 +5,13 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 class SimulationAttemptController extends Controller
 {
     public function attempt(Request $request, string $simulationId, int $levelNumber, int $floorNumber): JsonResponse
     {
-        $user = Auth::user();
+        $user = $request->user();
         if (! $user) {
             return response()->json(['success' => false, 'message' => 'Unauthenticated'], 401);
         }
@@ -28,6 +27,33 @@ class SimulationAttemptController extends Controller
         }
 
         $levelConfig = $levelConfigs[$levelNumber - 1];
+
+        if ($floorNumber < 1 || $floorNumber > $levelConfig['floorCount']) {
+            return response()->json(['success' => false, 'message' => 'Invalid floor index'], 400);
+        }
+
+        $levelIndex = $levelNumber - 1;
+        $floorIndex = $floorNumber - 1;
+
+        // Load existing progress without creating it until the attempt is valid.
+        $progress = $user->simulationProgress()
+            ->where('simulation_id', $simulationId)
+            ->first();
+
+        if ($progress) {
+            $progressData = $progress->progress_data;
+        } else {
+            $progressData = $this->getInitialProgress($simulationId);
+        }
+
+        if (! ($progressData['levels'][$levelIndex]['unlocked'] ?? false)) {
+            return response()->json(['success' => false, 'message' => 'Level not unlocked'], 403);
+        }
+
+        if (! isset($progressData['levels'][$levelIndex]['floors'][$floorIndex])) {
+            return response()->json(['success' => false, 'message' => 'Invalid floor index'], 400);
+        }
+
         $floorConfig = $this->getFloorContent($simulationId, $levelNumber, $floorNumber);
         if (! $floorConfig) {
             return response()->json(['success' => false, 'message' => 'Floor not found'], 404);
@@ -40,20 +66,6 @@ class SimulationAttemptController extends Controller
         }
 
         $floorPoints = $choice['points'];
-
-        // Get or create user progress
-        $progress = $user->simulationProgress()->firstOrCreate(
-            ['simulation_id' => $simulationId],
-            ['progress_data' => $this->getInitialProgress($simulationId)]
-        );
-
-        $progressData = $progress->progress_data;
-        $levelIndex = $levelNumber - 1;
-        $floorIndex = $floorNumber - 1;
-
-        if (! isset($progressData['levels'][$levelIndex]['floors'][$floorIndex])) {
-            return response()->json(['success' => false, 'message' => 'Invalid floor index'], 400);
-        }
 
         $floorProgress = &$progressData['levels'][$levelIndex]['floors'][$floorIndex];
         $floorProgress['completed'] = true;
@@ -95,8 +107,15 @@ class SimulationAttemptController extends Controller
         }
         $progressData['earned_badges'] = $earnedBadges;
 
-        $progress->progress_data = $progressData;
-        $progress->save();
+        if ($progress) {
+            $progress->progress_data = $progressData;
+            $progress->save();
+        } else {
+            $progress = $user->simulationProgress()->create([
+                'simulation_id' => $simulationId,
+                'progress_data' => $progressData,
+            ]);
+        }
 
         $isLastFloor = $floorNumber === $levelConfig['floorCount'];
         $nextLevelUnlocked = false;
@@ -116,7 +135,7 @@ class SimulationAttemptController extends Controller
 
     public function progress(Request $request): JsonResponse
     {
-        $user = Auth::user();
+        $user = $request->user();
         if (! $user) {
             return response()->json(['success' => false, 'message' => 'Unauthenticated'], 401);
         }
@@ -179,13 +198,16 @@ class SimulationAttemptController extends Controller
             ];
         }
 
+        $totalFloorCount = collect($levelConfigs)->sum('floorCount');
+        $maxTotalScore = collect($levelConfigs)->sum('maxScore');
+
         return [
             'simulation_id' => $simulationId,
             'completed_floor_count' => 0,
-            'total_floor_count' => 30,
+            'total_floor_count' => $totalFloorCount,
             'completion_percent' => 0,
             'total_score' => 0,
-            'max_score' => 100,
+            'max_score' => $maxTotalScore,
             'mastery_percent' => 0,
             'earned_badges' => [],
             'levels' => $levels,

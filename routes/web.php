@@ -17,7 +17,9 @@ Route::middleware('guest')->group(function () {
         ->name('login.store');
 
     Route::get('register', [RegisterController::class, 'create'])->name('register');
-    Route::post('register', [RegisterController::class, 'store'])->name('register.store');
+    Route::post('register', [RegisterController::class, 'store'])
+        ->middleware('throttle:6,1')
+        ->name('register.store');
 });
 
 Route::middleware('auth')->group(function () {
@@ -28,7 +30,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::prefix('simulasi')->group(function () {
+Route::middleware('auth')->prefix('simulasi')->group(function () {
     Route::get('/', function () {
         $user = auth()->user();
         $phishingProgress = $user?->simulationProgress()
@@ -47,7 +49,10 @@ Route::prefix('simulasi')->group(function () {
     })->name('simulasi.index');
 
     Route::get('/{simulation}', function (string $simulation) {
-        $levelConfigs = config('simulation.levels.'.$simulation) ?? [];
+        $levelConfigs = config('simulation.levels.'.$simulation);
+        if (! $levelConfigs) {
+            abort(404);
+        }
         $user = auth()->user();
         $progress = $user?->simulationProgress()
             ->where('simulation_id', $simulation)
@@ -74,7 +79,10 @@ Route::prefix('simulasi')->group(function () {
     })->name('simulasi.detail');
 
     Route::get('/{simulation}/level/{level}', function (string $simulation, int $level) {
-        $levelConfigs = config('simulation.levels.'.$simulation) ?? [];
+        $levelConfigs = config('simulation.levels.'.$simulation);
+        if (! $levelConfigs) {
+            abort(404);
+        }
         $levelConfig = $levelConfigs[$level - 1] ?? null;
         $totalFloors = $levelConfig['floorCount'] ?? 0;
 
@@ -102,7 +110,7 @@ Route::prefix('simulasi')->group(function () {
             'simulationId' => $simulation,
             'level' => $level,
             'maxScore' => $levelConfig['maxScore'] ?? 0,
-            'unlocked' => $levelProgress['unlocked'] ?? true,
+            'unlocked' => $levelProgress['unlocked'] ?? ($level - 1 === 0),
             'completed' => $levelProgress['completed'] ?? false,
             'levelScore' => $levelProgress['level_score'] ?? 0,
             'floors' => $floors,
@@ -110,11 +118,14 @@ Route::prefix('simulasi')->group(function () {
     })->name('simulasi.level.detail');
 
     Route::get('/{simulation}/level/{level}/floor/{floor}', function (string $simulation, int $level, int $floor) {
+        if (! config('simulation.levels.'.$simulation)) {
+            abort(404);
+        }
+
         return Inertia::render('Simulation/Play', [
             'simulationId' => $simulation,
             'level' => $level,
             'floor' => $floor,
-            'floorContent' => null,
         ]);
     })->name('simulasi.floor.play');
 });

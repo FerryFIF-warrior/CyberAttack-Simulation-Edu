@@ -3,6 +3,7 @@
         ['label' => 'Home', 'href' => route('landing'), 'active' => request()->routeIs('landing')],
         ['label' => 'About', 'href' => route('landing').'#fitur', 'active' => false],
         ['label' => 'Learning', 'href' => route('landing').'#alur', 'active' => false],
+        ['label' => 'Simulasi', 'href' => route('simulasi.index'), 'active' => request()->routeIs('simulasi.*')],
         ['label' => 'Dashboard', 'href' => route('dashboard'), 'active' => request()->routeIs('dashboard')],
     ];
 @endphp
@@ -10,7 +11,7 @@
 <header class="sticky top-0 z-50 border-b border-cat-line/60 bg-cat-bg/80 backdrop-blur">
     <div class="mx-auto flex h-14 max-w-6xl items-center justify-between px-6">
         <a href="{{ route('landing') }}" class="flex items-center gap-2">
-            <x-icon name="cat" class="size-6 text-cat-cyan" />
+            <img src="{{ asset('assets/img/logo.png') }}" alt="Security Cat" class="h-6 w-auto" />
             <span class="font-semibold text-white">Security Cat</span>
             <span class="cat-tag hidden sm:inline-flex">Edu Simulator</span>
         </a>

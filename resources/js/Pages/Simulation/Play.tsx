@@ -2,7 +2,7 @@ import { Head } from "@inertiajs/react";
 import { Link, router } from "@inertiajs/react";
 import { useEffect, useState, useCallback, useRef, KeyboardEventHandler } from "react";
 import type { FloorContent, StoryChoice, SimulationId, LevelConfig } from "@/features/simulation/types/simulation";
-import { phishingLevel1Floor1 } from "@/features/simulation/data/phishing/level-1";
+import { findFloorContent } from "@/features/simulation/data/registry";
 import { GameContainer } from "@/features/simulation/components/GameContainer";
 import { MapView } from "@/features/simulation/components/MapView";
 import { PlayerSprite } from "@/features/simulation/components/PlayerSprite";
@@ -32,7 +32,13 @@ function getLevelConfig(level: number): LevelConfig {
 }
 
 export default function PlayFloor({ simulationId, level, floor }: PlayFloorProps) {
-  const [floorContent, setFloorContent] = useState<FloorContent | null>(null);
+  const [floorContent, setFloorContent] = useState<FloorContent | null>(() =>
+    findFloorContent(simulationId, level, floor),
+  );
+  const [contentUnavailable, setContentUnavailable] = useState(
+    () => findFloorContent(simulationId, level, floor) === null,
+  );
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const levelConfig = getLevelConfig(level);
   const isLastFloor = floor === levelConfig.floorCount;
 
@@ -54,6 +60,7 @@ export default function PlayFloor({ simulationId, level, floor }: PlayFloorProps
     activePanel,
     selectedChoice,
     resultNarrative,
+    resetGameState,
   } = useSimulationStore();
 
   const playerStartRef = useRef({ x: 20, y: 70 });
@@ -69,7 +76,6 @@ export default function PlayFloor({ simulationId, level, floor }: PlayFloorProps
 
   // Stable handleMove using refs
   const handleMove = useCallback((direction: "up" | "down" | "left" | "right") => {
-    console.log('[handleMove] Called with direction:', direction, 'movementLockedRef:', movementLockedRef.current); // Debug
     if (movementLockedRef.current) return;
 
     let newX = playerPositionRef.current.x;
@@ -92,7 +98,6 @@ export default function PlayFloor({ simulationId, level, floor }: PlayFloorProps
 
     // Clamp to boundaries from PRD (4-96% X, 10-90% Y)
     const clamped = clampPosition(newX, newY, 4, 96, 10, 90);
-    console.log('[handleMove] New position:', clamped); // Debug
     setPlayerPositionRef.current(clamped);
   }, []);
 
@@ -171,11 +176,16 @@ export default function PlayFloor({ simulationId, level, floor }: PlayFloorProps
     if (!currentFloorContent || !selectedChoice) return;
 
     // Update progress via API
+    setSubmitError(null);
     try {
       await submitFloorAttempt(simulationId as SimulationId, level, floor, selectedChoice as "safe" | "neutral" | "risky");
     } catch (error) {
+      const message = error instanceof Error && error.message
+        ? error.message
+        : "Gagal menyimpan progress.";
+      setSubmitError(message);
       console.error("Failed to save progress:", error);
-      // Continue anyway for UX
+      return;
     }
 
     // Reset game state for next floor
@@ -212,13 +222,37 @@ export default function PlayFloor({ simulationId, level, floor }: PlayFloorProps
   ]);
 
   useEffect(() => {
-    if (simulationId === "phishing" && level === 1 && floor === 1) {
-      setFloorContent(phishingLevel1Floor1);
-      setPlayerPosition({ x: phishingLevel1Floor1.map.playerStart.x, y: phishingLevel1Floor1.map.playerStart.y });
-      playerStartRef.current = { x: phishingLevel1Floor1.map.playerStart.x, y: phishingLevel1Floor1.map.playerStart.y };
-      setCurrentFloorContent(phishingLevel1Floor1);
+    resetGameState();
+    const content = findFloorContent(simulationId, level, floor);
+    setFloorContent(content);
+    setContentUnavailable(content === null);
+    setSubmitError(null);
+    if (content) {
+      setPlayerPosition({ x: content.map.playerStart.x, y: content.map.playerStart.y });
+      playerStartRef.current = { x: content.map.playerStart.x, y: content.map.playerStart.y };
+      setCurrentFloorContent(content);
     }
-  }, [simulationId, level, floor, setFloorContent, setPlayerPosition, setCurrentFloorContent]);
+  }, [simulationId, level, floor, resetGameState, setFloorContent, setPlayerPosition, setCurrentFloorContent]);
+
+  if (contentUnavailable) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <Head title="Floor Belum Tersedia" />
+        <div className="text-center max-w-md px-6">
+          <p className="text-2xl font-bold text-gray-800 mb-2">Konten belum tersedia</p>
+          <p className="text-gray-600 mb-6">
+            Floor ini belum memiliki konten. Silakan kembali ke halaman level.
+          </p>
+          <Link
+            href={`/simulasi/${simulationId}/level/${level}`}
+            className="inline-block px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium shadow-sm"
+          >
+            Kembali ke Level
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   if (!floorContent) {
     return (
@@ -321,13 +355,24 @@ export default function PlayFloor({ simulationId, level, floor }: PlayFloorProps
         />
       )}
 
+      {phase === "floorCompleted" && submitError && (
+        <div
+          className="fixed left-0 right-0 z-40 bg-red-50 border-y border-red-300 p-4 shadow-lg text-center"
+          style={{ bottom: "33%" }}
+        >
+          <p className="text-red-700 font-semibold">{submitError}</p>
+          <p className="text-sm text-red-600 mt-1">
+            Progress belum tersimpan. Klik kembali "Lanjut" untuk mencoba menyimpan lagi.
+          </p>
+        </div>
+      )}
+
       {phase === "floorCompleted" && currentFloorContent && selectedChoice && (
         <PointSummary
           floorPoints={currentFloorContent.story.choices.find((c: StoryChoice) => c.id === selectedChoice)?.points ?? 0}
           isLastFloor={isLastFloor}
           totalLevelPoints={currentFloorContent.story.choices.find((c: StoryChoice) => c.id === selectedChoice)?.points ?? 0}
           maxLevelPoints={levelConfig.maxScore}
-          simulationId={simulationId}
           level={level}
           nextFloor={isLastFloor ? undefined : floor + 1}
           onContinue={handleFloorComplete}

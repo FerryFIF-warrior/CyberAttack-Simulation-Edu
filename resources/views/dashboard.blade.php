@@ -10,7 +10,7 @@
             </div>
             <div class="mt-5 flex flex-wrap items-end justify-between gap-4">
                 <div>
-                    <h1 class="text-2xl font-bold text-white sm:text-3xl">Selamat datang di Security Cat 👋</h1>
+                    <h1 class="text-2xl font-bold text-white sm:text-3xl">Selamat datang di Security Cat</h1>
                     <p class="mt-2 max-w-xl text-sm text-cat-muted">
                         Siap melanjutkan pembelajaran cybersecurity? Platform praktikum interaktif terpadu untuk memahami simulasi serangan dan membangun pertahanan siber yang tangguh.
                     </p>
@@ -70,7 +70,7 @@
                 @foreach ($modules as $module)
                     @php
                         $isDone = $module['status'] === 'selesai';
-                        $icons = ['phishing' => 'mail', 'brute-force' => 'lock', 'sql-injection' => 'database'];
+                        $icons = ['phishing' => 'mail', 'bruteforce' => 'lock', 'sqli' => 'database', 'auth' => 'target'];
                     @endphp
                     <article @class(['cat-card flex flex-col p-5', 'border-t-2 border-t-cat-cyan' => ! $isDone])>
                         <div class="flex items-start justify-between">
@@ -94,7 +94,7 @@
                             @endforeach
                         </div>
 
-                        <a href="#" @class([
+                        <a href="{{ route('simulasi.detail', ['simulation' => $module['slug']]) }}" @class([
                             'mt-4 w-full',
                             'cat-btn-ghost' => $isDone,
                             'cat-btn-primary' => ! $isDone,

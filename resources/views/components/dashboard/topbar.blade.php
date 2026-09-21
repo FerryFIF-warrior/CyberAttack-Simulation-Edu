@@ -4,7 +4,7 @@
     <div class="mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 px-6">
         <div class="flex min-w-0 items-center gap-3">
             <a href="{{ route('landing') }}" class="flex items-center gap-2">
-                <x-icon name="cat" class="size-5 text-cat-cyan" />
+                <img src="{{ asset('assets/img/logo.png') }}" alt="Portal Siswa" class="h-6 w-auto" />
                 <span class="hidden text-sm font-semibold text-white sm:inline">Portal Siswa Simulasi</span>
             </a>
             <span class="cat-tag hidden sm:inline-flex">Cyber Lab Zone</span>
