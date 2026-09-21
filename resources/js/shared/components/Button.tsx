@@ -1,7 +1,7 @@
-import type { FC } from "react";
+import type { FC, ReactNode } from "react";
 
 export const Button: FC<{
-  children: React.ReactNode;
+  children: ReactNode;
   className?: string;
   disabled?: boolean;
   variant?: "primary" | "secondary" | "danger" | "ghost";

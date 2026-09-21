@@ -1,7 +1,7 @@
-import type { FC } from "react";
+import type { FC, ReactNode } from "react";
 
 export const Card: FC<{
-  children: React.ReactNode;
+  children: ReactNode;
   className?: string;
   padding?: "none" | "sm" | "md" | "lg";
 }> = ({ children, className = "", padding = "md" }) => {

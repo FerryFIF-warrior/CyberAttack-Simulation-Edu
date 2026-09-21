@@ -48,7 +48,6 @@
                     </div>
                     <div class="p-5">
                         <div class="flex flex-col items-center gap-3 rounded-lg bg-cat-bg py-10">
-                            <x-icon name="cat" class="size-24 text-cat-cyan drop-shadow-[0_0_18px_rgb(0_229_255/0.45)]" />
                             <span class="cat-tag border-cat-green/30 bg-cat-green/10 text-cat-green">Sandbox Active</span>
                         </div>
                         <ul class="mt-4 space-y-2 font-mono text-[11px]">

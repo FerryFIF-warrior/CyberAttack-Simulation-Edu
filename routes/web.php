@@ -10,6 +10,9 @@ use Inertia\Inertia;
 
 Route::get('/', LandingController::class)->name('landing');
 
+Route::view('/about', 'about')->name('about');
+Route::view('/learning', 'learning')->name('learning');
+
 Route::middleware('guest')->group(function () {
     Route::get('login', [LoginController::class, 'create'])->name('login');
     Route::post('login', [LoginController::class, 'store'])
@@ -118,8 +121,28 @@ Route::middleware('auth')->prefix('simulasi')->group(function () {
     })->name('simulasi.level.detail');
 
     Route::get('/{simulation}/level/{level}/floor/{floor}', function (string $simulation, int $level, int $floor) {
-        if (! config('simulation.levels.'.$simulation)) {
+        $levelConfigs = config('simulation.levels.'.$simulation);
+        if (! $levelConfigs) {
             abort(404);
+        }
+        $levelConfig = $levelConfigs[$level - 1] ?? null;
+        if (! $levelConfig || $floor < 1 || $floor > ($levelConfig['floorCount'] ?? 0)) {
+            abort(404);
+        }
+
+        $user = auth()->user();
+        $progress = $user?->simulationProgress()
+            ->where('simulation_id', $simulation)
+            ->first();
+        $progressData = $progress?->progress_data;
+        $levelProgress = $progressData['levels'][$level - 1] ?? null;
+        $levelUnlocked = $levelProgress['unlocked'] ?? ($level - 1 === 0);
+
+        if (! $levelUnlocked) {
+            return redirect()->route('simulasi.level.detail', [
+                'simulation' => $simulation,
+                'level' => $level,
+            ]);
         }
 
         return Inertia::render('Simulation/Play', [

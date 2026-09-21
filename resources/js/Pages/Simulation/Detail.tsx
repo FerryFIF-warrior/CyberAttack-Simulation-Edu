@@ -1,5 +1,6 @@
 import { Head } from "@inertiajs/react";
 import { Link } from "@inertiajs/react";
+import type { ReactNode } from "react";
 import { Card } from "@/shared/components/Card";
 import { Button } from "@/shared/components/Button";
 
@@ -15,7 +16,7 @@ interface SimulationDetailProps {
     }[];
 }
 
-const simulationInfo: Record<string, { name: string; color: string; bgColor: string; borderColor: string; gradient: string; icon: React.ReactNode; description: string }> = {
+const simulationInfo: Record<string, { name: string; color: string; bgColor: string; borderColor: string; gradient: string; icon: ReactNode; description: string }> = {
     phishing: {
         name: "Phishing",
         color: "indigo",

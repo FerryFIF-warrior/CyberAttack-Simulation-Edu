@@ -29,10 +29,10 @@ export default function LevelDetail({
 }: LevelDetailProps) {
   if (!unlocked) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 via-white to-gray-100">
         <div className="text-center p-8">
           <Head title={`Level ${level} Locked`} />
-          <h1 className="text-3xl font-bold mb-4">Level {level} Terkunci</h1>
+          <h1 className="text-3xl font-bold mb-4 text-gray-900">Level {level} Terkunci</h1>
           <p className="text-gray-600 mb-6">
             Selesaikan level sebelumnya dengan skor minimal 15 untuk membuka level ini.
           </p>
@@ -48,9 +48,9 @@ export default function LevelDetail({
   }
 
   return (
-    <div className="min-h-screen p-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-indigo-50 py-12 px-4 sm:px-6 lg:px-8">
       <Head title={`Level ${level}`} />
-      <div className="max-w-3xl">
+      <div className="max-w-3xl mx-auto">
         <Link
           href={`/simulasi/${simulationId}`}
           className="mb-6 inline-block text-indigo-600 hover:underline"
@@ -58,10 +58,10 @@ export default function LevelDetail({
           ← Kembali ke Detail Simulasi
         </Link>
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-3xl font-bold">Level {level}</h1>
+          <h1 className="text-3xl font-bold text-gray-900">Level {level}</h1>
           <div className="text-right">
             {completed && levelScore !== undefined && (
-              <p className="text-lg font-semibold">
+              <p className="text-lg font-semibold text-gray-900">
                 Skor Level: {levelScore}/{maxScore}
               </p>
             )}
@@ -77,8 +77,8 @@ export default function LevelDetail({
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <h2 className="font-semibold">
-                    Floor {floor.floorNumber}: {floor.title}
+                  <h2 className="font-semibold text-gray-900">
+                    {floor.title}
                     {!floor.playable && <span className="ml-2 text-sm text-gray-500">(Locked)</span>}
                   </h2>
                   {floor.completed && floor.bestPoints !== undefined && (

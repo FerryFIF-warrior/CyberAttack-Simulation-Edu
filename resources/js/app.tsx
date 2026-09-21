@@ -1,9 +1,27 @@
 import "../css/app.css";
-import { createInertiaApp } from "@inertiajs/react";
+import { createInertiaApp, router } from "@inertiajs/react";
 import { resolvePageComponent } from "laravel-vite-plugin/inertia-helpers";
 import { createRoot } from "react-dom/client";
 
 const pages = import.meta.glob("./Pages/**/*.{jsx,tsx}");
+
+const closeOpenDetails = () => {
+  document.querySelectorAll("details[open]").forEach((details) => {
+    details.removeAttribute("open");
+  });
+};
+
+document.addEventListener("click", (event) => {
+  document.querySelectorAll("details[open]").forEach((details) => {
+    if (!details.contains(event.target as Node)) details.removeAttribute("open");
+  });
+});
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") closeOpenDetails();
+});
+
+router.on("navigate", closeOpenDetails);
 
 createInertiaApp({
   resolve: (name) => {

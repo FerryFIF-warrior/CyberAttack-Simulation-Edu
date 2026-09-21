@@ -31,6 +31,7 @@ export const MobileDPad: FC<MobileDPadProps> = ({
       <div className="grid grid-cols-3 gap-1.5">
         <div className="col-span-1" />
         <button
+          aria-label="Gerak atas"
           onClick={() => onMove("up")}
           onTouchStart={(e) => {
             e.preventDefault();
@@ -43,6 +44,7 @@ export const MobileDPad: FC<MobileDPadProps> = ({
         <div className="col-span-1" />
 
         <button
+          aria-label="Gerak kiri"
           onClick={() => onMove("left")}
           onTouchStart={(e) => {
             e.preventDefault();
@@ -54,6 +56,7 @@ export const MobileDPad: FC<MobileDPadProps> = ({
         </button>
         <div className="w-14 h-14" />
         <button
+          aria-label="Gerak kanan"
           onClick={() => onMove("right")}
           onTouchStart={(e) => {
             e.preventDefault();
@@ -66,6 +69,7 @@ export const MobileDPad: FC<MobileDPadProps> = ({
 
         <div className="col-span-1" />
         <button
+          aria-label="Gerak bawah"
           onClick={() => onMove("down")}
           onTouchStart={(e) => {
             e.preventDefault();

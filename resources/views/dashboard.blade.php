@@ -1,5 +1,5 @@
 <x-layouts.app title="Security Cat — Student Cybersecurity Dashboard">
-    <x-dashboard.topbar :student="$student" />
+    <x-navbar />
 
     <main class="mx-auto max-w-6xl space-y-10 px-6 py-8">
         {{-- Welcome --}}
@@ -182,8 +182,8 @@
         <div class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2 px-6 py-5 text-[11px] text-cat-muted">
             <p>Praktikum didampingi oleh Dosen Pengampu &amp; Asisten Laboratorium D3 TI UNS</p>
             <p class="flex gap-4">
-                <a href="#" class="hover:text-white">Panduan Praktikum (PDF)</a>
-                <a href="#" class="hover:text-white">FAQ Sandbox</a>
+                <span>Panduan Praktikum (PDF)</span>
+                <span>FAQ Sandbox</span>
             </p>
         </div>
     </footer>

@@ -19,6 +19,22 @@ class PagesTest extends TestCase
             ->assertSee('Phishing Detection Lab');
     }
 
+    public function test_about_page_renders_under_construction_notice(): void
+    {
+        $this->get(route('about'))
+            ->assertOk()
+            ->assertSee('Halaman About Segera Hadir')
+            ->assertSee('Dalam Pengembangan');
+    }
+
+    public function test_learning_page_renders_under_construction_notice(): void
+    {
+        $this->get(route('learning'))
+            ->assertOk()
+            ->assertSee('Halaman Alur Belajar Segera Hadir')
+            ->assertSee('Dalam Pengembangan');
+    }
+
     public function test_dashboard_page_renders(): void
     {
         $this->actingAs(User::factory()->create())
@@ -87,5 +103,19 @@ class PagesTest extends TestCase
             ->get(route('simulasi.floor.play', ['simulation' => 'phishing', 'level' => 1, 'floor' => 1]))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page->component('Simulation/Play'));
+    }
+
+    public function test_locked_level_floor_play_redirects_to_level_detail(): void
+    {
+        $this->actingAs(User::factory()->create())
+            ->get(route('simulasi.floor.play', ['simulation' => 'phishing', 'level' => 2, 'floor' => 1]))
+            ->assertRedirect(route('simulasi.level.detail', ['simulation' => 'phishing', 'level' => 2]));
+    }
+
+    public function test_out_of_range_floor_returns_404(): void
+    {
+        $this->actingAs(User::factory()->create())
+            ->get(route('simulasi.floor.play', ['simulation' => 'phishing', 'level' => 1, 'floor' => 6]))
+            ->assertNotFound();
     }
 }

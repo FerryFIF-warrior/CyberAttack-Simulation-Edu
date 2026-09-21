@@ -18,6 +18,7 @@ import { ChoicePanel } from "@/features/simulation/components/ChoicePanel";
 import { PointSummary } from "@/features/simulation/components/PointSummary";
 import { SIMULATION_LEVEL_CONFIG } from "@/features/simulation/types/simulation";
 import { submitFloorAttempt } from "@/features/simulation/lib/api";
+import type { AttemptResponse } from "@/features/simulation/lib/api";
 
 interface PlayFloorProps {
   simulationId: string;
@@ -39,8 +40,10 @@ export default function PlayFloor({ simulationId, level, floor }: PlayFloorProps
     () => findFloorContent(simulationId, level, floor) === null,
   );
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [attemptResult, setAttemptResult] = useState<AttemptResponse | null>(null);
   const levelConfig = getLevelConfig(level);
   const isLastFloor = floor === levelConfig.floorCount;
+  const nextFloorHasContent = !isLastFloor && findFloorContent(simulationId, level, floor + 1) !== null;
 
   // Game state from store
   const {
@@ -177,8 +180,10 @@ export default function PlayFloor({ simulationId, level, floor }: PlayFloorProps
 
     // Update progress via API
     setSubmitError(null);
+    setAttemptResult(null);
     try {
-      await submitFloorAttempt(simulationId as SimulationId, level, floor, selectedChoice as "safe" | "neutral" | "risky");
+      const result = await submitFloorAttempt(simulationId as SimulationId, level, floor, selectedChoice as "safe" | "neutral" | "risky");
+      setAttemptResult(result);
     } catch (error) {
       const message = error instanceof Error && error.message
         ? error.message
@@ -199,7 +204,7 @@ export default function PlayFloor({ simulationId, level, floor }: PlayFloorProps
     setCurrentFloorContent(null);
 
     // Navigate to next floor or back to level detail
-    if (isLastFloor) {
+    if (isLastFloor || !nextFloorHasContent) {
       router.visit(`/simulasi/${simulationId}/level/${level}`);
     } else {
       router.visit(`/simulasi/${simulationId}/level/${level}/floor/${floor + 1}`);
@@ -209,6 +214,7 @@ export default function PlayFloor({ simulationId, level, floor }: PlayFloorProps
     selectedChoice,
     floor,
     isLastFloor,
+    nextFloorHasContent,
     simulationId,
     level,
     setPhase,
@@ -371,38 +377,40 @@ export default function PlayFloor({ simulationId, level, floor }: PlayFloorProps
         <PointSummary
           floorPoints={currentFloorContent.story.choices.find((c: StoryChoice) => c.id === selectedChoice)?.points ?? 0}
           isLastFloor={isLastFloor}
-          totalLevelPoints={currentFloorContent.story.choices.find((c: StoryChoice) => c.id === selectedChoice)?.points ?? 0}
+          totalLevelPoints={attemptResult?.level_score ?? currentFloorContent.story.choices.find((c: StoryChoice) => c.id === selectedChoice)?.points ?? 0}
           maxLevelPoints={levelConfig.maxScore}
           level={level}
-          nextFloor={isLastFloor ? undefined : floor + 1}
+          nextFloor={nextFloorHasContent ? floor + 1 : undefined}
           onContinue={handleFloorComplete}
         />
       )}
 
-      {/* Debug Info Panel - fixed bottom, scrollable internally if needed */}
-      <aside className="fixed bottom-0 left-0 right-0 z-30 bg-white/90 backdrop-blur-sm border-t shadow-lg max-h-[40vh] overflow-y-auto">
-        <details className="max-w-6xl mx-auto p-4 text-sm">
-          <summary className="cursor-pointer font-semibold mb-2 text-gray-700">
-            Debug: {floorContent.title}
-          </summary>
-          <div className="space-y-1 text-gray-600">
-            <p><strong>Level:</strong> {level} | <strong>Floor:</strong> {floor}</p>
-            <p><strong>Max Points:</strong> {floorContent.maxPoints}</p>
-            <p>
-              <strong>Object:</strong> {floorContent.map.object.label} ({floorContent.map.object.x}%, {floorContent.map.object.y}%)
-            </p>
-            <p>
-              <strong>Player Position:</strong> ({playerPosition.x.toFixed(1)}%, {playerPosition.y.toFixed(1)}%)
-            </p>
-            <p><strong>Decorations:</strong> {floorContent.map.decorations.length}</p>
-            <p><strong>Phase:</strong> {phase}</p>
-            <p><strong>Movement Locked:</strong> {movementLocked ? "Yes" : "No"}</p>
-            <p><strong>Show Prompt:</strong> {showPrompt ? "Yes" : "No"}</p>
-            <p><strong>Active Panel:</strong> {activePanel}</p>
-            <p><strong>Selected Choice:</strong> {selectedChoice ?? "none"}</p>
-          </div>
-        </details>
-      </aside>
+      {/* Debug Info Panel - hanya tampil di lingkungan development */}
+      {import.meta.env.DEV && (
+        <aside className="fixed bottom-0 left-0 right-0 z-30 bg-white/90 backdrop-blur-sm border-t shadow-lg max-h-[40vh] overflow-y-auto">
+          <details className="max-w-6xl mx-auto p-4 text-sm">
+            <summary className="cursor-pointer font-semibold mb-2 text-gray-700">
+              Debug: {floorContent.title}
+            </summary>
+            <div className="space-y-1 text-gray-600">
+              <p><strong>Level:</strong> {level} | <strong>Floor:</strong> {floor}</p>
+              <p><strong>Max Points:</strong> {floorContent.maxPoints}</p>
+              <p>
+                <strong>Object:</strong> {floorContent.map.object.label} ({floorContent.map.object.x}%, {floorContent.map.object.y}%)
+              </p>
+              <p>
+                <strong>Player Position:</strong> ({playerPosition.x.toFixed(1)}%, {playerPosition.y.toFixed(1)}%)
+              </p>
+              <p><strong>Decorations:</strong> {floorContent.map.decorations.length}</p>
+              <p><strong>Phase:</strong> {phase}</p>
+              <p><strong>Movement Locked:</strong> {movementLocked ? "Yes" : "No"}</p>
+              <p><strong>Show Prompt:</strong> {showPrompt ? "Yes" : "No"}</p>
+              <p><strong>Active Panel:</strong> {activePanel}</p>
+              <p><strong>Selected Choice:</strong> {selectedChoice ?? "none"}</p>
+            </div>
+          </details>
+        </aside>
+      )}
     </div>
   );
 }

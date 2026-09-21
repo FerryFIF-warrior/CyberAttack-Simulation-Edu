@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useState } from "react";
 import type { FloorObject } from "@/features/simulation/types/simulation";
 import { calculateDistance } from "@/features/simulation/engine/distance";
 
@@ -9,11 +9,11 @@ export function useInteraction(
   enabled: boolean = true,
   movementLocked: boolean = false
 ): { showPrompt: boolean } {
-  const showPromptRef = useRef(false);
+  const [showPrompt, setShowPrompt] = useState(false);
 
   useEffect(() => {
     if (!enabled || movementLocked) {
-      showPromptRef.current = false;
+      setShowPrompt(false);
       return;
     }
 
@@ -24,10 +24,10 @@ export function useInteraction(
       object.y
     );
 
-    const showPrompt = distance <= object.interactionRadius;
-    showPromptRef.current = showPrompt;
+    const isNear = distance <= object.interactionRadius;
+    setShowPrompt(isNear);
 
-    if (showPrompt) {
+    if (isNear) {
       const handleKeyDown = (event: KeyboardEvent) => {
         if (event.key.toLowerCase() === "e") {
           event.preventDefault();
@@ -40,5 +40,5 @@ export function useInteraction(
     }
   }, [playerPosition, object, movementLocked, enabled, onInteract]);
 
-  return { showPrompt: showPromptRef.current };
+  return { showPrompt };
 }

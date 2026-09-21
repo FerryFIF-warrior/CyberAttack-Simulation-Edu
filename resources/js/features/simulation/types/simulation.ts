@@ -82,13 +82,3 @@ export const SIMULATION_LEVEL_CONFIG: LevelConfig[] = [
   { level: 4, floorCount: 7, maxScore: 20 },
   { level: 5, floorCount: 7, maxScore: 20 },
 ];
-
-export const TOTAL_FLOORS_PER_SIMULATION = 30;
-export const MAX_TOTAL_SCORE_PER_SIMULATION = 100;
-export const UNLOCK_THRESHOLD = 15;
-
-export type BadgeId = "beginner" | "suhu";
-
-export type SimulationBadges = {
-  earnedBadges: BadgeId[];
-};
