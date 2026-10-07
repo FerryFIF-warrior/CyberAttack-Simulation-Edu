@@ -13,7 +13,7 @@ export const Card: FC<{
   };
   return (
     <div
-      className={`bg-white/90 backdrop-blur-sm border border-gray-200 rounded-2xl shadow-sm ${paddingClasses[padding]} ${className}`}
+      className={`bg-cat-card border border-cat-line rounded-xl shadow-[0_8px_30px_rgba(0,0,0,0.4)] ${paddingClasses[padding]} ${className}`}
     >
       {children}
     </div>

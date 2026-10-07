@@ -36,18 +36,56 @@ Route::middleware('auth')->group(function () {
 Route::middleware('auth')->prefix('simulasi')->group(function () {
     Route::get('/', function () {
         $user = auth()->user();
-        $phishingProgress = $user?->simulationProgress()
-            ->where('simulation_id', 'phishing')
-            ->first();
-        $phishingData = $phishingProgress?->progress_data;
-
+        $slugs = ['phishing', 'bruteforce', 'sqli', 'auth'];
+        $levelConfigsAll = config('simulation.levels');
+        $progressAll = $user ? $user->simulationProgress()->whereIn('simulation_id', $slugs)->get()->keyBy('simulation_id') : collect();
+        $simulations = collect($slugs)->map(function (string $slug) use ($progressAll, $levelConfigsAll) {
+            $progress = $progressAll->get($slug);
+            $data = $progress?->progress_data;
+            $levels = $levelConfigsAll[$slug] ?? [];
+            $totalLevels = count($levels);
+            $levelsData = $data['levels'] ?? null;
+            $completedLevels = 0;
+            $completedFloors = $data['completed_floor_count'] ?? 0;
+            $totalFloors = $data['total_floor_count'] ?? collect($levels)->sum('floorCount');
+            if ($levelsData) {
+                $completedLevels = collect($levelsData)->filter(fn ($l) => ($l['completed'] ?? false))->count();
+            }
+            $totalScore = $data['total_score'] ?? 0;
+            $maxScore = $data['max_score'] ?? collect($levels)->sum('maxScore');
+            $completionPercent = $data['completion_percent'] ?? 0;
+            $status = 'not_started';
+            if ($data) {
+                if ($totalLevels > 0 && $completedLevels === $totalLevels) {
+                    $status = 'completed';
+                } elseif ($completedFloors > 0 || $completedLevels > 0) {
+                    $status = 'in_progress';
+                } else {
+                    $status = 'not_started';
+                }
+            }
+            return [
+                'id' => $slug,
+                'completionPercent' => $completionPercent,
+                'totalScore' => $totalScore,
+                'maxScore' => $maxScore,
+                'completedLevels' => $completedLevels,
+                'totalLevels' => $totalLevels,
+                'completedFloors' => $completedFloors,
+                'totalFloors' => $totalFloors,
+                'status' => $status,
+                'earnedBadges' => $data['earned_badges'] ?? [],
+            ];
+        })->values()->all();
+        $phishing = collect($simulations)->firstWhere('id', 'phishing');
         return Inertia::render('Simulations/Index', [
-            'phishingProgress' => $phishingData ? [
-                'completionPercent' => $phishingData['completion_percent'] ?? 0,
-                'totalScore' => $phishingData['total_score'] ?? 0,
-                'maxScore' => $phishingData['max_score'] ?? 100,
-                'earnedBadges' => $phishingData['earned_badges'] ?? [],
+            'phishingProgress' => $phishing ? [
+                'completionPercent' => $phishing['completionPercent'],
+                'totalScore' => $phishing['totalScore'],
+                'maxScore' => $phishing['maxScore'],
+                'earnedBadges' => $phishing['earnedBadges'],
             ] : null,
+            'simulations' => $simulations,
         ]);
     })->name('simulasi.index');
 
@@ -96,12 +134,16 @@ Route::middleware('auth')->prefix('simulasi')->group(function () {
         $progressData = $progress?->progress_data;
         $levelProgress = $progressData['levels'][$level - 1] ?? null;
 
-        $floors = collect(range(1, $totalFloors))->map(function (int $floorNum) use ($levelProgress) {
+        $floorTitles = [
+            'phishing' => [1 => [1 => 'Email Hadiah Palsu', 2 => 'SMS Phishing Mengatasnamakan Bank', 3 => 'Lampiran Berbahaya', 4 => 'Urgensi Palsu', 5 => 'Ujian Akhir: Detektif Email']],
+            'bruteforce' => [1 => [1 => 'Serangan Dictionary: Password Lemah', 2 => 'Menahan Serangan dengan Rate Limiting', 3 => 'Kunci Akun dengan Account Lockout', 4 => 'Lapisan Tambahan: CAPTCHA & MFA', 5 => 'Ujian Akhir: Pertahanan Berlapis']],
+        ];
+        $floors = collect(range(1, $totalFloors))->map(function (int $floorNum) use ($levelProgress, $simulation, $level, $floorTitles) {
             $floorProgress = $levelProgress['floors'][$floorNum - 1] ?? null;
 
             return [
                 'floorNumber' => $floorNum,
-                'title' => "Floor $floorNum",
+                'title' => $floorTitles[$simulation][$level][$floorNum] ?? "Floor $floorNum",
                 'completed' => $floorProgress['completed'] ?? false,
                 'playable' => $floorProgress['completed'] ?? ($floorNum === 1),
                 'bestPoints' => $floorProgress['best_points'] ?? 0,

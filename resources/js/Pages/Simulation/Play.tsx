@@ -242,16 +242,16 @@ export default function PlayFloor({ simulationId, level, floor }: PlayFloorProps
 
   if (contentUnavailable) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-cat-bg">
         <Head title="Floor Belum Tersedia" />
         <div className="text-center max-w-md px-6">
-          <p className="text-2xl font-bold text-gray-800 mb-2">Konten belum tersedia</p>
-          <p className="text-gray-600 mb-6">
+          <p className="text-2xl font-bold text-white mb-2">Konten belum tersedia</p>
+          <p className="text-cat-muted mb-6">
             Floor ini belum memiliki konten. Silakan kembali ke halaman level.
           </p>
           <Link
             href={`/simulasi/${simulationId}/level/${level}`}
-            className="inline-block px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium shadow-sm"
+            className="inline-block px-6 py-3 bg-cat-cyan text-cat-bg rounded-lg hover:brightness-110 transition-colors font-semibold shadow-sm"
           >
             Kembali ke Level
           </Link>
@@ -262,11 +262,11 @@ export default function PlayFloor({ simulationId, level, floor }: PlayFloorProps
 
   if (!floorContent) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-cat-bg">
         <Head title="Loading..." />
         <div className="text-center">
-          <div className="w-12 h-12 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-gray-600">Memuat floor...</p>
+          <div className="w-12 h-12 border-4 border-cat-cyan border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-cat-muted">Memuat floor...</p>
         </div>
       </div>
     );
@@ -278,16 +278,16 @@ export default function PlayFloor({ simulationId, level, floor }: PlayFloorProps
   const catPosition = phase === "choosing" ? "left" : "center";
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-cat-bg flex flex-col">
       <Head title={`${floorContent.title} - Level ${level} Floor ${floor}`} />
 
       {/* Fixed Header - Navigation at top */}
-      <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-sm border-b px-4 py-3 shadow-sm">
-        <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <h1 className="text-lg font-semibold text-gray-900">{floorContent.title}</h1>
+      <header className="sticky top-0 z-50 bg-cat-card/80 backdrop-blur border-b border-cat-line px-3 sm:px-4 py-2.5 sm:py-3 shadow-[0_4px_20px_rgba(0,0,0,0.3)]">
+        <div className="max-w-[960px] mx-auto flex items-center justify-between gap-3">
+          <div className="min-w-0"><p className="font-mono text-[10px] tracking-[0.16em] uppercase text-cat-cyan">LV {level} · FL {String(floor).padStart(2,"0")}</p><h1 className="text-[14px] sm:text-[15px] font-semibold text-white leading-tight truncate">{floorContent.title}</h1></div>
           <Link
             href={`/simulasi/${simulationId}/level/${level}`}
-            className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors text-sm shadow-sm"
+            className="shrink-0 inline-flex items-center gap-1.5 px-3 sm:px-4 py-2 sm:py-2.5 bg-cat-surface border border-cat-line text-slate-200 rounded-lg hover:border-cat-cyan/20 transition-colors text-xs sm:text-sm font-medium"
           >
             Kembali ke Level
           </Link>
@@ -295,7 +295,7 @@ export default function PlayFloor({ simulationId, level, floor }: PlayFloorProps
       </header>
 
       {/* Game Area - Fixed Screen Layout, centered vertically */}
-      <main className="flex-1 flex items-center justify-center pt-4 pb-24 px-4 overflow-hidden relative z-10">
+      <main className="flex-1 flex items-center justify-center pt-3 sm:pt-4 pb-24 sm:pb-28 px-3 sm:px-4 overflow-hidden relative z-10">
         <GameContainer aspectRatio="16 / 9" onKeyDown={handleGameKeyDown}>
           <MapView floorContent={floorContent} />
 
@@ -363,11 +363,11 @@ export default function PlayFloor({ simulationId, level, floor }: PlayFloorProps
 
       {phase === "floorCompleted" && submitError && (
         <div
-          className="fixed left-0 right-0 z-40 bg-red-50 border-y border-red-300 p-4 shadow-lg text-center"
+          className="fixed left-0 right-0 z-40 bg-cat-card border-y border-red-500/30 p-4 shadow-[0_-8px_30px_rgba(0,0,0,0.4)] text-center"
           style={{ bottom: "33%" }}
         >
-          <p className="text-red-700 font-semibold">{submitError}</p>
-          <p className="text-sm text-red-600 mt-1">
+          <p className="text-red-400 font-semibold">{submitError}</p>
+          <p className="text-sm text-red-400/80 mt-1">
             Progress belum tersimpan. Klik kembali "Lanjut" untuk mencoba menyimpan lagi.
           </p>
         </div>
@@ -385,32 +385,7 @@ export default function PlayFloor({ simulationId, level, floor }: PlayFloorProps
         />
       )}
 
-      {/* Debug Info Panel - hanya tampil di lingkungan development */}
-      {import.meta.env.DEV && (
-        <aside className="fixed bottom-0 left-0 right-0 z-30 bg-white/90 backdrop-blur-sm border-t shadow-lg max-h-[40vh] overflow-y-auto">
-          <details className="max-w-6xl mx-auto p-4 text-sm">
-            <summary className="cursor-pointer font-semibold mb-2 text-gray-700">
-              Debug: {floorContent.title}
-            </summary>
-            <div className="space-y-1 text-gray-600">
-              <p><strong>Level:</strong> {level} | <strong>Floor:</strong> {floor}</p>
-              <p><strong>Max Points:</strong> {floorContent.maxPoints}</p>
-              <p>
-                <strong>Object:</strong> {floorContent.map.object.label} ({floorContent.map.object.x}%, {floorContent.map.object.y}%)
-              </p>
-              <p>
-                <strong>Player Position:</strong> ({playerPosition.x.toFixed(1)}%, {playerPosition.y.toFixed(1)}%)
-              </p>
-              <p><strong>Decorations:</strong> {floorContent.map.decorations.length}</p>
-              <p><strong>Phase:</strong> {phase}</p>
-              <p><strong>Movement Locked:</strong> {movementLocked ? "Yes" : "No"}</p>
-              <p><strong>Show Prompt:</strong> {showPrompt ? "Yes" : "No"}</p>
-              <p><strong>Active Panel:</strong> {activePanel}</p>
-              <p><strong>Selected Choice:</strong> {selectedChoice ?? "none"}</p>
-            </div>
-          </details>
-        </aside>
-      )}
+
     </div>
   );
 }

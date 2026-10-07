@@ -18,16 +18,16 @@ export const ChoicePanel: FC<ChoicePanelProps> = ({
     className={`absolute left-1/2 -translate-x-1/2 z-40 w-full max-w-2xl px-4 ${className || ""}`}
     style={{ bottom: "calc(33% + 16px)" }}
   >
-    <div className="space-y-3">
+    <div className="space-y-2.5">
       {choices.map((choice) => (
         <button
           key={choice.id}
           type="button"
           onClick={() => !disabled && onSelect(choice.id)}
           disabled={disabled}
-          className="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-lg text-left hover:border-blue-400 hover:bg-blue-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          className="w-full px-4 py-3.5 bg-cat-card border border-cat-line rounded-xl text-left hover:border-cat-cyan/30 hover:bg-white/[0.03] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-cat-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-cat-bg group"
         >
-          <p className="text-base font-medium text-gray-800 leading-relaxed">{choice.label}</p>
+          <p className="text-sm font-medium text-slate-200 leading-relaxed group-hover:text-white">{choice.label}</p>
         </button>
       ))}
     </div>

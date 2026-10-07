@@ -155,20 +155,23 @@ class SimulationAttemptController extends Controller
 
     private function getFloorContent(string $simulationId, int $levelNumber, int $floorNumber): ?array
     {
-        // For MVP, return hardcoded floor-1 content for phishing level 1
-        if ($simulationId === 'phishing' && $levelNumber === 1 && $floorNumber === 1) {
-            return [
-                'story' => [
-                    'choices' => [
-                        ['id' => 'safe', 'points' => 4],
-                        ['id' => 'neutral', 'points' => 1],
-                        ['id' => 'risky', 'points' => -2],
-                    ],
-                ],
-            ];
+        $levelConfigs = config('simulation.levels.'.$simulationId);
+        if (! $levelConfigs || ! isset($levelConfigs[$levelNumber - 1])) {
+            return null;
         }
-
-        return null;
+        $levelConfig = $levelConfigs[$levelNumber - 1];
+        if ($floorNumber < 1 || $floorNumber > ($levelConfig['floorCount'] ?? 0)) {
+            return null;
+        }
+        return [
+            'story' => [
+                'choices' => [
+                    ['id' => 'safe', 'points' => 4],
+                    ['id' => 'neutral', 'points' => 1],
+                    ['id' => 'risky', 'points' => -2],
+                ],
+            ],
+        ];
     }
 
     private function getInitialProgress(string $simulationId): array
