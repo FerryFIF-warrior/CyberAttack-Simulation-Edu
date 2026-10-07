@@ -84,13 +84,18 @@ export default function LevelDetail({ simulationId, level, maxScore, unlocked, c
       <div className="pointer-events-none absolute inset-0 opacity-[0.03]" style={{ backgroundImage:"radial-gradient(circle at 1px 1px, white 1px, transparent 0)", backgroundSize:"24px 24px" }} />
       <div className="pointer-events-none absolute -top-28 -right-28 w-[520px] h-[520px] rounded-full blur-[90px] opacity-[0.06] bg-cat-cyan" />
       <Head title={`${meta.name} — Level ${level}`} />
+      <style>{`@keyframes breachWarp { from { opacity:0; transform: translateY(14px) scale(0.985) } to { opacity:1; transform: none } }
+@keyframes floorPop { from { opacity:0; transform: translateY(10px) scale(0.97) } to { opacity:1; transform: none } }
+@keyframes scanLine { 0% { transform: translateX(-100%) } 100% { transform: translateX(220%) } }
+@media (prefers-reduced-motion: reduce) { [style*="breachWarp"], [style*="floorPop"], [style*="scanLine"] { animation:none !important; opacity:1 !important; transform:none !important } }
+`}</style>
       <div className="relative max-w-[980px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-10">
         <Link href={`/simulasi/${simulationId}`} className="inline-flex items-center gap-2 font-mono text-[11px] tracking-widest uppercase text-cat-muted hover:text-white transition mb-5 sm:mb-6">
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg> Kembali ke {meta.name}
         </Link>
 
-        {/* header */}
-        <div className="rounded-2xl border border-cat-line bg-cat-card overflow-hidden">
+        {/* header — breach enter */}
+        <div data-anim="header" style={{ animation: "breachWarp 560ms cubic-bezier(0.16,1,0.3,1) both" }}><div className="rounded-2xl border border-cat-line bg-cat-card overflow-hidden">
           <div className="p-5 sm:p-6 lg:p-7">
             <div className="flex flex-wrap items-center gap-2 mb-3">
               <span className="font-mono text-[10px] tracking-[0.16em] uppercase px-2 py-1 rounded bg-cat-surface border border-cat-line text-cat-muted">{meta.code} · {meta.vector}</span>
@@ -111,25 +116,25 @@ export default function LevelDetail({ simulationId, level, maxScore, unlocked, c
               </div>
             </div>
           </div>
-        </div>
+        </div></div>
 
-        {/* LEGEND */}
-        <div className="mt-4 sm:mt-5 flex flex-wrap gap-2 font-mono text-[10px] tracking-wide text-cat-muted">
+        {/* LEGEND — 140ms */}
+        <div data-anim="legend" style={{ animation: "breachWarp 520ms cubic-bezier(0.16,1,0.3,1) 140ms both" }}><div className="mt-4 sm:mt-5 flex flex-wrap gap-2 font-mono text-[10px] tracking-wide text-cat-muted">
           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-cat-card border border-cat-line"><span className="w-2 h-2 rounded-full bg-cat-green" /> Selesai</span>
           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-cat-card border border-cat-line"><span className="w-2 h-2 rounded-full bg-cat-cyan animate-pulse" /> Terbuka</span>
           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-cat-card border border-cat-line"><span className="w-2 h-2 rounded-full bg-cat-line" /> Terkunci</span>
           <span className="ml-auto hidden sm:inline text-[10px] tracking-widest uppercase opacity-60">HP: geser vertikal · Laptop: jalur horizontal</span>
-        </div>
+        </div></div>
 
-        {/* PETA — responsive: vertical on hp, horizontal road on laptop */}
-        <div className="mt-4 sm:mt-5 rounded-2xl border border-cat-line bg-cat-card p-4 sm:p-6 lg:p-7 overflow-hidden relative">
+        {/* PETA — 220ms + scan */}
+        <div data-anim="map" style={{ animation: "breachWarp 560ms cubic-bezier(0.16,1,0.3,1) 220ms both" }}><div className="mt-4 sm:mt-5 rounded-2xl border border-cat-line bg-cat-card p-4 sm:p-6 lg:p-7 overflow-hidden relative">
           {/* spine line */}
           <div className="hidden sm:block absolute left-6 right-6 top-[38px] h-px border-t border-dashed border-cat-line/60" aria-hidden="true" />
           <div className="sm:hidden absolute left-[20px] sm:left-6 top-6 bottom-6 w-px border-l border-dashed border-cat-line/50" aria-hidden="true" />
 
           {/* mobile vertical stack */}
           <div className="flex flex-col gap-0 sm:hidden">
-            {floors.map((f, i)=> <FloorNode key={f.floorNumber} floor={f} simulationId={simulationId} level={level} isLast={i===floors.length-1} />)}
+            {floors.map((f, i)=> <div key={f.floorNumber} style={{ animation: "floorPop 460ms cubic-bezier(0.16,1,0.3,1) both", animationDelay: `${280 + i*70}ms` }}><FloorNode floor={f} simulationId={simulationId} level={level} isLast={i===floors.length-1} /></div>)}
           </div>
           {/* desktop horizontal road */}
           <div className="hidden sm:grid sm:grid-cols-5 gap-3 lg:gap-4 relative">
@@ -143,9 +148,9 @@ export default function LevelDetail({ simulationId, level, maxScore, unlocked, c
           </div>
 
           <p className="sm:hidden mt-4 text-center font-mono text-[10px] tracking-wide text-cat-muted/60">Ketuk Masuk untuk buka simulasi floor. Urutan terkunci sampai floor sebelumnya selesai.</p>
-        </div>
+        </div></div>
 
-        <div className="mt-4 flex flex-col sm:flex-row gap-3 sm:justify-between sm:items-center">
+        <div className="mt-4 flex flex-col sm:flex-row gap-3 sm:justify-between sm:items-center" style={{ animation: "breachWarp 520ms cubic-bezier(0.16,1,0.3,1) 340ms both" }}>
           <Link href={`/simulasi/${simulationId}`} className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-cat-surface border border-cat-line text-slate-200 font-medium text-sm hover:border-cat-cyan/20">← Daftar level</Link>
           {floors.find(f=>f.playable && !f.completed) && (
             <Link href={`/simulasi/${simulationId}/level/${level}/floor/${floors.find(f=>f.playable && !f.completed)!.floorNumber}`} className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-cat-cyan text-cat-bg font-semibold text-sm hover:brightness-110 shadow-[0_0_18px_rgba(0,229,255,0.18)]">
