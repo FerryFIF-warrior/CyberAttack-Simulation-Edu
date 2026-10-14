@@ -4,41 +4,41 @@
 
 @section('content')
     <div
-        class="flex flex-col w-full items-center justify-center py-12 md:py-16 px-margin-mobile sm:px-margin-tablet lg:px-margin-desktop relative overflow-hidden">
+        class="flex flex-col w-full items-center justify-center py-10 md:py-14 px-6 relative overflow-hidden">
         {{-- Ambient Glow Behind Register Deck --}}
-        <div class="absolute w-[600px] h-[600px] -top-28 left-1/2 -translate-x-1/2 rounded-full bg-primary-container/10 blur-[140px] pointer-events-none -z-10">
+        <div class="absolute w-[700px] h-[700px] -top-32 left-1/2 -translate-x-1/2 rounded-full pointer-events-none -z-10" style="background:radial-gradient(circle at center, rgba(0,229,255,0.09) 0%, transparent 70%);filter:blur(40px)">
         </div>
         <div
-            class="absolute w-80 h-80 -bottom-20 right-1/4 rounded-full bg-secondary-container/10 blur-[120px] pointer-events-none -z-10">
+            class="absolute w-80 h-80 -bottom-20 right-1/4 rounded-full pointer-events-none -z-10" style="background:radial-gradient(circle, rgba(139,196,168,0.07) 0%, transparent 70%);filter:blur(30px)">
         </div>
 
         {{-- Central Card Shell with entrance animation --}}
         <div
-            class="w-full max-w-lg bg-surface-container-low/90 backdrop-blur-2xl rounded-2xl border border-surface-container-high/60 shadow-2xl p-8 sm:p-11 flex flex-col gap-7 relative animate-fade-in-up">
+            class="w-full max-w-lg p-7 sm:p-9 flex flex-col gap-6 relative clay-card" style="background:#162030;border:3px solid #233044;border-radius:28px;box-shadow:0 18px 36px rgba(0,0,0,0.55), inset 0 1.5px 0 rgba(255,255,255,0.08)">
             {{-- Subtle Top Terminal Bar Accent --}}
             <div
-                class="flex items-center justify-between font-label-caps text-label-caps text-on-surface-variant pb-1 border-b border-surface-container-high/40">
+                class="flex items-center justify-between font-label-caps text-label-caps text-[#8b98ab] pb-1 border-b border-clay-line">
                 <div class="flex items-center gap-2">
-                    <span class="w-2 h-2 rounded-full bg-tertiary-fixed-dim inline-block animate-pulse"></span>
-                    <span class="tracking-widest uppercase text-tertiary-fixed-dim">NODE PROVISIONING</span>
+                    <span class="w-2 h-2 rounded-full bg-[#A8D5BA] inline-block animate-pulse"></span>
+                    <span class="tracking-widest uppercase text-[#A8D5BA]">NODE PROVISIONING</span>
                 </div>
-                <span class="text-outline uppercase hidden sm:inline tracking-wider">ETHICAL SANDBOX // V2.4</span>
+                <span class="text-[#8b98ab] uppercase hidden sm:inline tracking-wider">ETHICAL SANDBOX // V2.4</span>
             </div>
 
             {{-- Header Section with Mascot Logo --}}
             <div class="flex flex-col items-center text-center gap-3 pt-1">
                 <a class="relative group inline-block cursor-pointer" href="{{ url('/') }}">
                     <div
-                        class="absolute -inset-2 rounded-full bg-primary-container/20 blur-lg group-hover:bg-primary-container/40 transition-all duration-300">
+                        class="absolute -inset-2 rounded-full bg-[#00e5ff]/10 blur-lg group-hover:bg-[#00e5ff]/20 transition-all duration-300">
                     </div>
                     <img alt="Security Cat Logo"
                         class="relative w-16 h-16 sm:w-20 sm:h-20 object-contain drop-shadow-[0_0_16px_rgba(0,240,255,0.45)] group-hover:scale-105 transition-transform duration-200"
                         src="{{ asset('assets/img/logo.png') }}" />
                 </a>
                 <div class="flex flex-col gap-1.5 mt-1">
-                    <h1 class="font-headline-lg text-headline-lg text-primary tracking-tight">Registrasi Operator Baru
+                    <h1 class="font-headline-lg text-headline-lg text-white tracking-tight">Registrasi Operator Baru
                     </h1>
-                    <p class="font-body-md text-body-md text-on-surface-variant">
+                    <p class="font-body-md text-body-md text-[#8b98ab]">
                         Daftar operator baru white-hat.
                     </p>
                 </div>
@@ -52,20 +52,20 @@
                 {{-- Field 1: Callsign --}}
                 <div class="flex flex-col gap-2">
                     <div class="flex items-center justify-between">
-                        <label class="font-label-caps text-label-caps uppercase tracking-wider text-on-surface"
+                        <label class="font-label-caps text-label-caps uppercase tracking-wider text-slate-200"
                             for="callsign">
                             Callsign
                         </label>
-                        <span class="font-code-sm text-code-sm text-outline flex items-center gap-1"
+                        <span class="font-code-sm text-code-sm text-[#8b98ab] flex items-center gap-1"
                             id="callsign-status">
                             <span class="material-symbols-outlined text-[14px]">terminal</span> MENUNGGU INPUT
                         </span>
                     </div>
                     <div class="relative flex items-center">
                         <span
-                            class="absolute left-3.5 font-code-md text-code-md text-secondary-container pointer-events-none select-none">cat@root:~$</span>
+                            class="absolute left-3.5 font-code-md text-code-md text-[#00e5ff]-container pointer-events-none select-none">cat@root:~$</span>
                         <input
-                            class="w-full bg-surface-container-lowest text-on-surface pl-28 pr-4 py-3 rounded-lg font-code-md text-code-md outline-none border border-surface-container-high/40 focus:border-primary-container/60 transition-all duration-200 focus:bg-surface-container-low @error('callsign') border-error/70 @enderror"
+                            class="w-full bg-clay-inset text-slate-200 pl-28 pr-4 py-3 rounded-lg font-code-md text-code-md outline-none border border-clay-line focus:border-[#00e5ff]/40 transition-all duration-200 focus:bg-clay-inset @error('callsign') border-error/70 @enderror"
                             id="callsign" name="callsign" placeholder="ctf_handle" required type="text"
                             value="{{ old('callsign') }}" autocomplete="username" />
                     </div>
@@ -78,15 +78,15 @@
 
                 {{-- Field 2: Email Kampus / Instansi --}}
                 <div class="flex flex-col gap-2">
-                    <label class="font-label-caps text-label-caps uppercase tracking-wider text-on-surface"
+                    <label class="font-label-caps text-label-caps uppercase tracking-wider text-slate-200"
                         for="institution-email">
                         Email Kampus / Instansi
                     </label>
                     <div class="relative flex items-center">
                         <span
-                            class="absolute left-3.5 material-symbols-outlined text-outline text-[18px] pointer-events-none">alternate_email</span>
+                            class="absolute left-3.5 material-symbols-outlined text-[#8b98ab] text-[18px] pointer-events-none">alternate_email</span>
                         <input
-                            class="w-full bg-surface-container-lowest text-on-surface pl-11 pr-4 py-3 rounded-lg font-body-md text-body-md outline-none border border-surface-container-high/40 focus:border-primary-container/60 transition-all duration-200 focus:bg-surface-container-low @error('email') border-error/70 @enderror"
+                            class="w-full bg-clay-inset text-slate-200 pl-11 pr-4 py-3 rounded-lg font-body-md text-body-md outline-none border border-clay-line focus:border-[#00e5ff]/40 transition-all duration-200 focus:bg-clay-inset @error('email') border-error/70 @enderror"
                             id="institution-email" name="email" placeholder="operator@kampus.ac.id" required
                             type="email" value="{{ old('email') }}" autocomplete="email" />
                     </div>
@@ -99,19 +99,19 @@
 
                 {{-- Field 3: Kata Sandi --}}
                 <div class="flex flex-col gap-2">
-                    <label class="font-label-caps text-label-caps uppercase tracking-wider text-on-surface"
+                    <label class="font-label-caps text-label-caps uppercase tracking-wider text-slate-200"
                         for="master-key">
                         Kata Sandi
                     </label>
                     <div class="relative flex items-center">
                         <span
-                            class="absolute left-3.5 material-symbols-outlined text-outline text-[18px] pointer-events-none">vpn_key</span>
+                            class="absolute left-3.5 material-symbols-outlined text-[#8b98ab] text-[18px] pointer-events-none">vpn_key</span>
                         <input
-                            class="w-full bg-surface-container-lowest text-on-surface pl-11 pr-11 py-3 rounded-lg font-code-md text-code-md outline-none border border-surface-container-high/40 focus:border-primary-container/60 transition-all duration-200 focus:bg-surface-container-low @error('password') border-error/70 @enderror"
+                            class="w-full bg-clay-inset text-slate-200 pl-11 pr-11 py-3 rounded-lg font-code-md text-code-md outline-none border border-clay-line focus:border-[#00e5ff]/40 transition-all duration-200 focus:bg-clay-inset @error('password') border-error/70 @enderror"
                             id="master-key" name="password" placeholder="••••••••••••" required type="password"
                             autocomplete="new-password" />
                         <button aria-label="Toggle Password Visibility"
-                            class="absolute right-3.5 text-outline hover:text-primary transition-colors flex items-center"
+                            class="absolute right-3.5 text-[#8b98ab] hover:text-white transition-colors flex items-center"
                             id="toggle-password" type="button">
                             <span class="material-symbols-outlined text-[18px]" id="eye-icon">visibility</span>
                         </button>
@@ -124,13 +124,13 @@
                     {{-- Minimalist Cyber Entropy Gauge --}}
                     <div class="flex flex-col gap-1.5 pt-1">
                         <div class="flex items-center justify-between font-code-sm text-code-sm">
-                            <span class="text-on-surface-variant flex items-center gap-1.5">
+                            <span class="text-[#8b98ab] flex items-center gap-1.5">
                                 <span
-                                    class="material-symbols-outlined text-[14px] text-tertiary-fixed-dim">verified_user</span>
-                                Entropi: <span class="text-tertiary-fixed-dim font-semibold"
+                                    class="material-symbols-outlined text-[14px] text-[#A8D5BA]">verified_user</span>
+                                Entropi: <span class="text-[#A8D5BA] font-semibold"
                                     id="entropy-label">Kosong</span>
                             </span>
-                            <span class="text-outline font-body-sm text-body-sm">Minimal 12 karakter</span>
+                            <span class="text-[#8b98ab] font-body-sm text-body-sm">Minimal 12 karakter</span>
                         </div>
                         <div class="grid grid-cols-4 gap-1.5 h-1.5 w-full" id="entropy-bars">
                             <div class="entropy-bar h-full rounded-full bg-surface-container-high transition-colors">
@@ -147,15 +147,15 @@
 
                 {{-- Field 4: Konfirmasi Kata Sandi --}}
                 <div class="flex flex-col gap-2">
-                    <label class="font-label-caps text-label-caps uppercase tracking-wider text-on-surface"
+                    <label class="font-label-caps text-label-caps uppercase tracking-wider text-slate-200"
                         for="confirm-key">
                         Konfirmasi Kata Sandi
                     </label>
                     <div class="relative flex items-center">
                         <span
-                            class="absolute left-3.5 material-symbols-outlined text-outline text-[18px] pointer-events-none">key_vertical</span>
+                            class="absolute left-3.5 material-symbols-outlined text-[#8b98ab] text-[18px] pointer-events-none">key_vertical</span>
                         <input
-                            class="w-full bg-surface-container-lowest text-on-surface pl-11 pr-4 py-3 rounded-lg font-code-md text-code-md outline-none border border-surface-container-high/40 focus:border-primary-container/60 transition-all duration-200 focus:bg-surface-container-low @error('password_confirmation') border-error/70 @enderror"
+                            class="w-full bg-clay-inset text-slate-200 pl-11 pr-4 py-3 rounded-lg font-code-md text-code-md outline-none border border-clay-line focus:border-[#00e5ff]/40 transition-all duration-200 focus:bg-clay-inset @error('password_confirmation') border-error/70 @enderror"
                             id="confirm-key" name="password_confirmation" placeholder="••••••••••••" required
                             type="password" autocomplete="new-password" />
                     </div>
@@ -169,11 +169,11 @@
                 {{-- Ethics Pact Checkbox (TIDAK dicentang otomatis) --}}
                 <div class="flex items-start gap-3 pt-1">
                     <div class="flex items-center h-5">
-                        <input class="w-4 h-4 rounded bg-surface-container-lowest text-primary-container accent-primary-container cursor-pointer"
+                        <input class="w-4 h-4 rounded bg-clay-inset text-white-container accent-primary-container cursor-pointer"
                             id="ethics-pact" name="ethics_pact" type="checkbox" value="1"
                             @checked(old('ethics_pact')) required />
                     </div>
-                    <label class="font-body-sm text-body-sm text-on-surface-variant cursor-pointer leading-relaxed"
+                    <label class="font-body-sm text-body-sm text-[#8b98ab] cursor-pointer leading-relaxed"
                         for="ethics-pact">
                         Saya menyetujui Pakta Etika White-Hat Security Cat.
                     </label>
@@ -195,7 +195,7 @@
                 <div class="relative flex items-center justify-center my-1.5">
                     <div class="w-full h-px bg-surface-container-high"></div>
                     <span
-                        class="absolute bg-surface-container-low px-3 font-label-caps text-label-caps text-outline uppercase tracking-wider">
+                        class="absolute bg-clay-inset px-3 font-label-caps text-label-caps text-[#8b98ab] uppercase tracking-wider">
                         Atau Autentikasi Cepat
                     </span>
                 </div>
@@ -203,7 +203,7 @@
                 {{-- Single Sign-On Options (dekoratif — integrasi menyusul via Socialite, Fase 8) --}}
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <button
-                        class="flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg bg-surface-container-high/60 text-on-surface font-body-sm text-body-sm border border-surface-container-high/40 opacity-50 cursor-not-allowed"
+                        class="flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg bg-clay-inset text-slate-200 font-body-sm text-body-sm border border-clay-line opacity-50 cursor-not-allowed"
                         type="button" disabled title="Segera hadir — integrasi SSO GitHub menyusul (Fase 8)">
                         <svg class="w-4 h-4 fill-current" viewbox="0 0 24 24">
                             <path clip-rule="evenodd"
@@ -213,18 +213,18 @@
                         <span class="">Daftar via GitHub</span>
                     </button>
                     <button
-                        class="flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg bg-surface-container-high/60 text-on-surface font-body-sm text-body-sm border border-surface-container-high/40 opacity-50 cursor-not-allowed"
+                        class="flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg bg-clay-inset text-slate-200 font-body-sm text-body-sm border border-clay-line opacity-50 cursor-not-allowed"
                         type="button" disabled title="Segera hadir — integrasi SSO kampus menyusul (Fase 8)">
-                        <span class="material-symbols-outlined text-[18px] text-secondary">school</span>
+                        <span class="material-symbols-outlined text-[18px] text-[#00e5ff]">school</span>
                         <span class="">SSO Kampus / Lembaga</span>
                     </button>
                 </div>
             </form>
 
             {{-- Footer Switcher --}}
-            <div class="pt-2 text-center font-body-sm text-body-sm text-on-surface-variant border-t border-surface-container-high/40">
+            <div class="pt-2 text-center font-body-sm text-body-sm text-[#8b98ab] border-t border-clay-line">
                 Sudah memiliki terminal access?
-                <a class="text-primary font-semibold hover:text-primary-fixed-dim hover:underline ml-1 inline-flex items-center gap-0.5"
+                <a class="text-white font-semibold hover:text-[#00e5ff] hover:underline ml-1 inline-flex items-center gap-0.5"
                     href="{{ route('login') }}">
                     Masuk di sini <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
                 </a>

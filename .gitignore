@@ -34,3 +34,10 @@ _ide_helper.php
 Homestead.json
 Homestead.yaml
 Thumbs.db
+*.backup
+*.backup-*
+*.pre-clay.*
+*.clay-backup-*
+*.spatial-cybermap.*
+HERMES_CONTEXT.md
+HERMES_LAB.md

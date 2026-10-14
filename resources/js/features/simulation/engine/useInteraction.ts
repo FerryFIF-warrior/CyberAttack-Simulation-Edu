@@ -29,7 +29,8 @@ export function useInteraction(
 
     if (isNear) {
       const handleKeyDown = (event: KeyboardEvent) => {
-        if (event.key.toLowerCase() === "e") {
+        const key = event.key.toLowerCase();
+        if (key === "e" || key === "enter") {
           event.preventDefault();
           onInteract();
         }

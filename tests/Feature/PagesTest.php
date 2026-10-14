@@ -118,4 +118,93 @@ class PagesTest extends TestCase
             ->get(route('simulasi.floor.play', ['simulation' => 'phishing', 'level' => 1, 'floor' => 6]))
             ->assertNotFound();
     }
+
+    public function test_out_of_range_level_returns_404(): void
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user)
+            ->get(route('simulasi.level.detail', ['simulation' => 'phishing', 'level' => 0]))
+            ->assertNotFound();
+
+        $this->actingAs($user)
+            ->get(route('simulasi.level.detail', ['simulation' => 'phishing', 'level' => 6]))
+            ->assertNotFound();
+
+        $this->actingAs($user)
+            ->get(route('simulasi.level.detail', ['simulation' => 'phishing', 'level' => 99]))
+            ->assertNotFound();
+    }
+
+    public function test_index_includes_labs_metadata(): void
+    {
+        $this->actingAs(User::factory()->create())
+            ->get(route('simulasi.index'))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Simulations/Index')
+                ->has('labs.phishing')
+                ->has('labs.bruteforce'));
+    }
+
+    public function test_simulation_detail_includes_lab_meta_and_unlock_threshold(): void
+    {
+        $this->actingAs(User::factory()->create())
+            ->get(route('simulasi.detail', ['simulation' => 'phishing']))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Simulation/Detail')
+                ->where('unlockThreshold', 15)
+                ->where('lab.name', 'Phishing')
+                ->where('lab.code', 'Modul 01'));
+    }
+
+    public function test_locked_floor_play_shows_playable_false_with_required_floor(): void
+    {
+        $this->actingAs(User::factory()->create())
+            ->get(route('simulasi.floor.play', ['simulation' => 'phishing', 'level' => 1, 'floor' => 2]))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Simulation/Play')
+                ->where('floorPlayable', false)
+                ->where('requiredFloor', 1)
+                ->where('floorCount', 5)
+                ->where('maxScore', 20));
+    }
+
+    public function test_floor_play_unlocks_after_previous_floor_completed(): void
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $this->postJson('/api/simulations/phishing/levels/1/floors/1/attempt', [
+            'choice_id' => 'safe',
+        ])->assertOk();
+
+        $this->get(route('simulasi.floor.play', ['simulation' => 'phishing', 'level' => 1, 'floor' => 2]))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Simulation/Play')
+                ->where('floorPlayable', true)
+                ->where('requiredFloor', null));
+    }
+
+    public function test_level_detail_updates_floor_playable_and_unlock_threshold(): void
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $this->postJson('/api/simulations/phishing/levels/1/floors/1/attempt', [
+            'choice_id' => 'safe',
+        ])->assertOk();
+
+        $this->get(route('simulasi.level.detail', ['simulation' => 'phishing', 'level' => 1]))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Simulation/LevelDetail')
+                ->where('unlockThreshold', 15)
+                ->where('floors.0.playable', true)
+                ->where('floors.1.playable', true)
+                ->where('floors.2.playable', false));
+    }
 }

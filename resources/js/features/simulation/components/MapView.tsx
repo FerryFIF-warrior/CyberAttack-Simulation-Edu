@@ -2,6 +2,7 @@ import { FloorContent } from "@/features/simulation/types/simulation";
 
 interface MapViewProps {
   floorContent: FloorContent;
+  onInteract?: () => void;
 }
 
 const TreeIcon = () => (
@@ -58,7 +59,7 @@ function getObjectIcon(id: string) {
   return <MailboxIcon />;
 }
 
-export function MapView({ floorContent }: MapViewProps) {
+export function MapView({ floorContent, onInteract }: MapViewProps) {
   const { map } = floorContent;
   const { backgroundClass, decorations, object } = map;
 
@@ -97,6 +98,10 @@ export function MapView({ floorContent }: MapViewProps) {
         }}
         title={object.label}
         data-testid="interactive-object"
+        role={onInteract ? "button" : undefined}
+        tabIndex={onInteract ? 0 : undefined}
+        onClick={onInteract}
+        onKeyDown={onInteract ? (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onInteract(); } } : undefined}
       >
         {getObjectIcon(object.id)}
       </div>

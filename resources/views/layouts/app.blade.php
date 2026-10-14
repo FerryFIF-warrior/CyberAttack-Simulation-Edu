@@ -19,47 +19,32 @@
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0"
         rel="stylesheet" />
 
-    {{-- Tailwind 4 via Vite (menggantikan cdn.tailwindcss.com) --}}
     @vite('resources/js/blade.js')
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@700;800&family=Nunito:wght@700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
 </head>
 
-<body
-    class="bg-background font-body-md text-body-md text-on-surface min-h-screen flex flex-col justify-between selection:bg-primary-container selection:text-on-primary-container">
+<body class="min-h-screen flex flex-col justify-between antialiased selection:bg-[#00e5ff]/30" style="background:radial-gradient(900px 600px at 20% -10%, #1a2a44 0%, transparent 60%),radial-gradient(800px 600px at 95% 10%, #1e2a4a 0%, transparent 55%),#070b14;color:#cbd5e1">
 
-    {{-- ===== Header ===== --}}
-    <header
-        class="fixed top-0 w-full z-50 bg-surface-container-lowest/80 backdrop-blur-xl border-b border-surface-container/40 shadow-[0_1px_8px_rgba(0,0,0,0.04)] animate-enter-nav">
-        <div class="h-16 max-w-7xl mx-auto px-margin-desktop flex items-center justify-between">
-            <div class="flex items-center gap-gutter-md">
-                <a class="flex items-center gap-gutter-sm hover:opacity-85 transition-opacity duration-200"
-                    href="{{ url('/') }}">
-                    <span class="font-headline-sm text-headline-sm text-primary tracking-tight font-bold">Security Cat</span>
-                </a>
-            </div>
-            <nav class="flex items-center gap-gutter-md">
+    <header class="sticky top-0 z-50 backdrop-blur-xl" style="background:rgba(7,11,20,0.82);border-bottom:3px solid #233044;box-shadow:0 8px 24px rgba(0,0,0,0.35)">
+        <div class="h-[62px] max-w-7xl mx-auto px-6 flex items-center justify-between">
+            <a class="flex items-center gap-2 hover:opacity-90 transition" href="{{ url('/') }}">
+                <img src="{{ asset('assets/img/logo.png') }}" alt="logo" class="h-7 w-7 rounded-xl" style="border:2px solid rgba(255,255,255,0.08);box-shadow:0 4px 12px rgba(0,0,0,0.35)" />
+                <span class="font-extrabold tracking-tight text-white" style="font-family:'Bricolage Grotesque','Nunito',sans-serif">Security Cat</span>
+                <span class="hidden sm:inline-flex px-2.5 py-1 rounded-full text-[10px] font-extrabold tracking-widest" style="background:#0f1828;border:2px solid rgba(255,255,255,0.07);color:rgba(255,255,255,0.55);font-family:'Space Mono',monospace">Edu Simulator</span>
+            </a>
+            <nav class="flex items-center gap-2">
                 @auth
-                    <a class="text-on-surface-variant hover:text-primary font-medium text-body-md transition-colors duration-200 px-3 py-1.5 rounded-lg hover:bg-surface-container/60 {{ request()->routeIs('dashboard') ? 'text-primary font-bold' : '' }}"
-                        href="{{ route('dashboard') }}">Dashboard</a>
-                    <form method="POST" action="{{ route('logout') }}" class="inline">
-                        @csrf
-                        <button type="submit"
-                            class="text-on-surface-variant hover:text-error font-medium text-body-md transition-colors duration-200 px-3 py-1.5 rounded-lg hover:bg-surface-container/60 inline-flex items-center gap-1.5">
-                            <span class="material-symbols-outlined text-body-lg">logout</span>
-                            Logout
-                        </button>
-                    </form>
+                    <a class="hidden sm:inline-flex px-3 py-1.5 rounded-full text-sm font-bold {{ request()->routeIs('dashboard') ? 'text-white' : 'text-white/60 hover:text-white' }}" style="{{ request()->routeIs('dashboard') ? 'background:#0f1828;border:2px solid rgba(255,255,255,0.08);box-shadow:inset 0 1px 0 rgba(255,255,255,0.06)' : '' }}" href="{{ route('dashboard') }}">Dashboard</a>
+                    <form method="POST" action="{{ route('logout') }}" class="inline">@csrf<button type="submit" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-bold text-white/70 hover:text-white" style="border:2px solid transparent">Logout</button></form>
                 @else
-                    <a class="font-medium text-body-md transition-colors duration-200 px-3 py-1.5 rounded-lg hover:bg-surface-container/60 {{ request()->routeIs('login') ? 'text-primary font-bold' : 'text-on-surface-variant hover:text-primary' }}"
-                        href="{{ route('login') }}">Sign In</a>
-                    <a class="font-medium text-body-md transition-colors duration-200 px-3 py-1.5 rounded-lg hover:bg-surface-container/60 {{ request()->routeIs('register') ? 'text-primary font-bold' : 'text-on-surface-variant hover:text-primary' }}"
-                        href="{{ route('register') }}">Register</a>
+                    <a class="px-3 py-1.5 rounded-full text-sm font-bold {{ request()->routeIs('login') ? 'text-white' : 'text-white/60 hover:text-white' }}" style="{{ request()->routeIs('login') ? 'background:#0f1828;border:2px solid rgba(255,255,255,0.08)' : '' }}" href="{{ route('login') }}">Sign In</a>
+                    <a class="px-4 py-1.5 rounded-full text-sm font-extrabold" style="background:#00e5ff;color:#0a0e15;border:2.5px solid #00b8cc;box-shadow:0 4px 0 #00b8cc,0 8px 18px rgba(0,0,0,0.3),inset 0 1px 0 rgba(255,255,255,0.3);font-family:'Nunito',sans-serif" href="{{ route('register') }}">Register</a>
                 @endauth
             </nav>
         </div>
     </header>
 
-    {{-- ===== Konten halaman ===== --}}
-    <main class="w-full pt-16 flex-1 flex flex-col justify-center bg-background">
+    <main class="w-full flex-1 flex flex-col justify-center" style="background:transparent">
         @yield('content')
     </main>
 

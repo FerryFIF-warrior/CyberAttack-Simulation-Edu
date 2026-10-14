@@ -17,6 +17,15 @@ export default {
         extend: {
             colors: {
                 'cat-bg': '#0a0e15',
+                'clay-bg': '#070b14',
+                'clay-surface': '#162030',
+                'clay-inset': '#0f1828',
+                'clay-line': '#233044',
+                'clay-mint': '#A8D5BA',
+                'clay-sage': '#8BC4A8',
+                'clay-sand': '#D8C4A3',
+                'clay-peach': '#E9B99A',
+                'clay-puff': '#ffd23a',
                 'cat-surface': '#0f1520',
                 'cat-card': '#131a26',
                 'cat-line': '#1f2937',

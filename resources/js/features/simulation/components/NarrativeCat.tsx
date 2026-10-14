@@ -33,8 +33,8 @@ const CatBody = () => (
     {/* Whiskers */}
     <line x1="18" y1="33" x2="4" y2="29" stroke="#222" strokeWidth="1.5" />
     <line x1="18" y1="37" x2="4" y2="41" stroke="#222" strokeWidth="1.5" />
-    <line x1="62" y1="33" x2="76" y2="29" stroke="#222" strokeWeight="1.5" />
-    <line x1="62" y1="37" x2="76" y2="41" stroke="#222" strokeWeight="1.5" />
+    <line x1="62" y1="33" x2="76" y2="29" stroke="#222" strokeWidth="1.5" />
+    <line x1="62" y1="37" x2="76" y2="41" stroke="#222" strokeWidth="1.5" />
     {/* Paws */}
     <ellipse cx="24" cy="78" rx="10" ry="7" fill="#ffaa44" />
     <ellipse cx="56" cy="78" rx="10" ry="7" fill="#ffaa44" />

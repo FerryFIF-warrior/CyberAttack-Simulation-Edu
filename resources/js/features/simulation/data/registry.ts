@@ -37,3 +37,15 @@ export function findFloorContent(
     ) ?? null
   );
 }
+
+export function hasFloorContent(
+  simulationId: string,
+  levelNumber: number,
+  floorNumber: number,
+): boolean {
+  return findFloorContent(simulationId, levelNumber, floorNumber) !== null;
+}
+
+export function hasAnyFloorContent(simulationId: string): boolean {
+  return allFloors.some((floor) => floor.simulationId === simulationId);
+}

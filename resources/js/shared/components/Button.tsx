@@ -1,30 +1,11 @@
-import type { FC, ReactNode } from "react";
-
-export const Button: FC<{
-  children: ReactNode;
-  className?: string;
-  disabled?: boolean;
-  variant?: "primary" | "secondary" | "danger" | "ghost";
-  onClick?: () => void;
-  type?: "button" | "submit" | "reset";
-}> = ({ children, className = "", disabled = false, variant = "primary", ...props }) => {
-  const baseClasses =
-    "inline-flex items-center justify-center gap-2 px-5 py-3 rounded-lg font-semibold text-sm transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cat-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-cat-bg";
-
-  const variantClasses: Record<string, string> = {
-    primary: "bg-cat-cyan text-cat-bg hover:brightness-110 shadow-[0_0_20px_rgba(0,229,255,0.25)] hover:shadow-[0_0_28px_rgba(0,229,255,0.35)]",
-    secondary: "bg-cat-card border border-cat-line text-slate-200 hover:border-cat-cyan/30 hover:bg-white/[0.03]",
-    danger: "bg-red-500/90 text-white hover:bg-red-500 border border-red-500/30",
-    ghost: "bg-transparent text-cat-muted hover:text-slate-200 hover:bg-white/[0.04] border border-transparent",
+import type { FC, ReactNode, CSSProperties } from "react";
+export const Button: FC<{ children: ReactNode; className?: string; disabled?: boolean; variant?: "primary"|"secondary"|"danger"|"ghost"; onClick?: ()=>void; type?: "button"|"submit"|"reset"; }> = ({ children, className="", disabled=false, variant="primary", ...props }) => {
+  const base="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-[16px] font-extrabold text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00e5ff] disabled:opacity-50 disabled:cursor-not-allowed clay-btn-puff";
+  const styles: Record<string,CSSProperties> = {
+    primary: { background:"#00e5ff", color:"#0a0e15", border:"2.5px solid #00b8cc", boxShadow:"0 5px 0 #00b8cc,0 10px 22px rgba(0,0,0,0.35),inset 0 1px 0 rgba(255,255,255,0.3)", fontFamily:"'Nunito',sans-serif" },
+    secondary: { background:"#162030", color:"#fff", border:"3px solid #233044", boxShadow:"0 5px 0 rgba(0,0,0,0.35),0 10px 22px rgba(0,0,0,0.25),inset 0 1px 0 rgba(255,255,255,0.08)", fontFamily:"'Nunito',sans-serif" },
+    danger: { background:"#ef4444", color:"#fff", border:"2.5px solid #991b1b", boxShadow:"0 5px 0 #7f1d1d,0 10px 22px rgba(0,0,0,0.3)", fontFamily:"'Nunito',sans-serif" },
+    ghost: { background:"transparent", color:"rgba(255,255,255,0.7)", border:"2px solid transparent" },
   };
-
-  return (
-    <button
-      className={`${baseClasses} ${variantClasses[variant]} ${className}`}
-      disabled={disabled}
-      {...props}
-    >
-      {children}
-    </button>
-  );
+  return <button className={base+" "+className} style={styles[variant]} disabled={disabled} {...(props as any)}>{children}</button>;
 };

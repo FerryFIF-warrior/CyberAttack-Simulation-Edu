@@ -23,7 +23,7 @@ export default function VerifyEmail({ status }) {
             </div>
 
             {status === 'verification-link-sent' && (
-                <div className="mb-4 text-sm font-medium text-cat-green">
+                <div className="mb-4 text-sm font-medium text-[#34d399]">
                     A new verification link has been sent to the email address
                     you provided during registration.
                 </div>
@@ -39,7 +39,7 @@ export default function VerifyEmail({ status }) {
                         href={route('logout')}
                         method="post"
                         as="button"
-                        className="rounded-md text-sm text-cat-cyan underline hover:text-cat-cyan/80 focus:outline-none focus:ring-2 focus:ring-cat-cyan focus:ring-offset-2"
+                        className="rounded-md text-sm text-[#00e5ff] underline hover:text-[#00e5ff]/80 focus:outline-none focus:ring-2 focus:ring-[#00e5ff] focus:ring-offset-2"
                     >
                         Log Out
                     </Link>

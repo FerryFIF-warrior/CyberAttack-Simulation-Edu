@@ -75,10 +75,10 @@ export type LevelConfig = {
   maxScore: number;
 };
 
-export const SIMULATION_LEVEL_CONFIG: LevelConfig[] = [
-  { level: 1, floorCount: 5, maxScore: 20 },
-  { level: 2, floorCount: 5, maxScore: 20 },
-  { level: 3, floorCount: 6, maxScore: 20 },
-  { level: 4, floorCount: 7, maxScore: 20 },
-  { level: 5, floorCount: 7, maxScore: 20 },
-];
+export type LabMeta = {
+  name: string;
+  lab: string;
+  vector: string;
+  code: string;
+  tags: string[];
+};

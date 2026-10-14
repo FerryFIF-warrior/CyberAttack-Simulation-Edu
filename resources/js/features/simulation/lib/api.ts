@@ -12,6 +12,23 @@ export interface AttemptResponse {
     message?: string;
 }
 
+export class FloorLockedError extends Error {
+    requiredFloor: number;
+
+    constructor(requiredFloor: number, message: string) {
+        super(message);
+        this.name = "FloorLockedError";
+        this.requiredFloor = requiredFloor;
+    }
+}
+
+interface AttemptErrorBody {
+    success?: boolean;
+    code?: string;
+    required_floor?: number;
+    message?: string;
+}
+
 const API_BASE = "/api";
 
 async function fetchWithCsrf(url: string, options: RequestInit = {}): Promise<Response> {
@@ -44,7 +61,29 @@ export async function submitFloorAttempt(
     );
 
     if (!response.ok) {
-        const error = await response.json().catch(() => ({ message: "Request failed" }));
+        const error: AttemptErrorBody = await response.json().catch(() => ({ message: "Request failed" }));
+
+        if (response.status === 403 && error.code === "floor_locked") {
+            throw new FloorLockedError(
+                typeof error.required_floor === "number" ? error.required_floor : floorNumber - 1,
+                error.message || "Floor belum terbuka.",
+            );
+        }
+
+        if (response.status === 401) {
+            // Sesi habis — arahkan ke login agar user bisa autentikasi ulang
+            window.location.href = "/login";
+            throw new Error("Sesi Anda telah berakhir. Silakan login kembali.");
+        }
+
+        if (response.status === 419) {
+            throw new Error("Sesi CSRF kedaluwarsa. Muat ulang halaman dan coba lagi.");
+        }
+
+        if (response.status === 429) {
+            throw new Error("Terlalu banyak permintaan. Tunggu sebentar lalu coba lagi.");
+        }
+
         throw new Error(error.message || `HTTP ${response.status}`);
     }
 

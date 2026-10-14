@@ -1,13 +1,6 @@
 import type { FC } from "react";
-interface InteractionPromptProps { visible: boolean; label?: string; className?: string; }
-export const InteractionPrompt: FC<InteractionPromptProps> = ({ visible, label = "Interaksi", className }) => {
-  if (!visible) return null;
-  return (
-    <div className={`absolute left-1/2 -translate-x-1/2 z-20 px-4 sm:px-5 py-2 sm:py-2.5 bg-cat-card/95 backdrop-blur border border-cat-cyan/30 text-slate-100 rounded-full sm:rounded-xl text-xs sm:text-sm font-medium shadow-[0_8px_24px_rgba(0,229,255,0.15)] flex items-center gap-2 sm:gap-3 animate-pulse ${className || ""}`} style={{ bottom: "10px" }}>
-      <span className="hidden sm:inline-flex items-center justify-center w-7 h-7 rounded-md bg-cat-cyan text-cat-bg font-mono text-[11px] font-bold shrink-0">E</span>
-      <span className="whitespace-nowrap">Tekan <span className="sm:hidden font-bold">E</span> untuk {label}</span>
-      <span className="hidden sm:inline w-px h-4 bg-cat-line" />
-      <span className="hidden sm:inline font-mono text-[11px] text-cat-muted whitespace-nowrap">Enter juga bisa</span>
-    </div>
-  );
+interface InteractionPromptProps { visible: boolean; label?: string; className?: string; onInteract?: () => void; }
+export const InteractionPrompt: FC<InteractionPromptProps> = ({ visible, label="Interaksi", className, onInteract }) => {
+  if(!visible) return null;
+  return <button type="button" onClick={onInteract} className={"absolute left-1/2 -translate-x-1/2 z-20 px-4 py-2.5 flex items-center gap-2 rounded-full text-xs font-extrabold text-white cursor-pointer "+(className||"")} style={{ bottom:10, background:"#162030", border:"3px solid #233044", boxShadow:"0 10px 22px rgba(0,0,0,0.35),inset 0 1px 0 rgba(255,255,255,0.06)", fontFamily:"'Nunito',sans-serif" }}><span className="hidden sm:inline-flex items-center justify-center w-7 h-7 rounded-xl text-[11px] font-extrabold shrink-0" style={{ background:"#00e5ff", color:"#0a0e15", border:"2px solid #00b8cc" }}>E</span><span>Tekan <span className="sm:hidden font-extrabold">E</span> untuk {label}</span><span className="hidden sm:inline w-px h-4" style={{ background:"#233044" }} /><span className="hidden sm:inline text-[11px]" style={{ fontFamily:"'Space Mono',monospace", color:"#8b98ab" }}>Enter juga bisa</span></button>;
 };

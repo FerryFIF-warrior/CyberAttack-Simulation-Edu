@@ -17,7 +17,7 @@ class SimulationAttemptController extends Controller
         }
 
         $validated = $request->validate([
-            'choice_id' => ['required', Rule::in(['safe', 'neutral', 'risky'])],
+            'choice_id' => ['required', Rule::in(array_keys(config('simulation.choice_points', ['safe' => 4, 'neutral' => 1, 'risky' => -2])))],
         ]);
 
         // Get floor configuration
@@ -54,6 +54,18 @@ class SimulationAttemptController extends Controller
             return response()->json(['success' => false, 'message' => 'Invalid floor index'], 400);
         }
 
+        $levelFloors = $progressData['levels'][$levelIndex]['floors'];
+        $previousFloorCompleted = $floorNumber === 1
+            || (bool) ($levelFloors[$floorIndex - 1]['completed'] ?? false);
+        if (! $previousFloorCompleted) {
+            return response()->json([
+                'success' => false,
+                'code' => 'floor_locked',
+                'required_floor' => $floorNumber - 1,
+                'message' => 'Selesaikan Floor '.($floorNumber - 1).' terlebih dahulu untuk membuka Floor '.$floorNumber.'.',
+            ], 403);
+        }
+
         $floorConfig = $this->getFloorContent($simulationId, $levelNumber, $floorNumber);
         if (! $floorConfig) {
             return response()->json(['success' => false, 'message' => 'Floor not found'], 404);
@@ -80,7 +92,8 @@ class SimulationAttemptController extends Controller
         $levelProgress['mastered'] = $levelProgress['level_score'] === $levelProgress['max_score'];
 
         // Unlock next level if threshold met
-        if ($levelProgress['completed'] && $levelProgress['level_score'] >= 15) {
+        $unlockThreshold = (int) config('simulation.level_unlock_threshold', 15);
+        if ($levelProgress['completed'] && $levelProgress['level_score'] >= $unlockThreshold) {
             $nextLevelIndex = $levelIndex + 1;
             if (isset($progressData['levels'][$nextLevelIndex])) {
                 $progressData['levels'][$nextLevelIndex]['unlocked'] = true;
@@ -99,10 +112,10 @@ class SimulationAttemptController extends Controller
         $earnedBadges = [];
         $level1 = $progressData['levels'][0] ?? null;
         $level2 = $progressData['levels'][1] ?? null;
-        if ($level1 && $level2 && $level1['level_score'] === 20 && $level2['level_score'] === 20) {
+        if ($level1 && $level2 && $level1['level_score'] >= $level1['max_score'] && $level2['level_score'] >= $level2['max_score']) {
             $earnedBadges[] = 'beginner';
         }
-        if (collect($progressData['levels'])->every(fn ($l) => $l['level_score'] === 20)) {
+        if (collect($progressData['levels'])->every(fn ($l) => $l['level_score'] >= $l['max_score'])) {
             $earnedBadges[] = 'suhu';
         }
         $progressData['earned_badges'] = $earnedBadges;
@@ -163,13 +176,15 @@ class SimulationAttemptController extends Controller
         if ($floorNumber < 1 || $floorNumber > ($levelConfig['floorCount'] ?? 0)) {
             return null;
         }
+        $choicePoints = config('simulation.choice_points', ['safe' => 4, 'neutral' => 1, 'risky' => -2]);
+        $choices = collect($choicePoints)
+            ->map(fn (int $points, string $id) => ['id' => $id, 'points' => $points])
+            ->values()
+            ->all();
+
         return [
             'story' => [
-                'choices' => [
-                    ['id' => 'safe', 'points' => 4],
-                    ['id' => 'neutral', 'points' => 1],
-                    ['id' => 'risky', 'points' => -2],
-                ],
+                'choices' => $choices,
             ],
         ];
     }
@@ -177,6 +192,8 @@ class SimulationAttemptController extends Controller
     private function getInitialProgress(string $simulationId): array
     {
         $levelConfigs = config('simulation.levels.'.$simulationId) ?? [];
+        $choicePointsForMax = config('simulation.choice_points', ['safe' => 4, 'neutral' => 1, 'risky' => -2]);
+        $maxFloorPoints = ! empty($choicePointsForMax) ? max($choicePointsForMax) : 4;
         $levels = [];
 
         foreach ($levelConfigs as $index => $config) {
@@ -186,7 +203,7 @@ class SimulationAttemptController extends Controller
                     'floor_number' => $i,
                     'completed' => false,
                     'best_points' => 0,
-                    'max_points' => $config['maxScore'] / $config['floorCount'], // simplified
+                    'max_points' => $maxFloorPoints,
                 ];
             }
             $levels[] = [
