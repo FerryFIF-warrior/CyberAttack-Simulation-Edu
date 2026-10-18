@@ -1,4 +1,4 @@
-import type { FloorContent } from "@/features/simulation/types/simulation";
+﻿import type { FloorContent } from "@/features/simulation/types/simulation";
 
 export const phishingLevel1Floor3: FloorContent = {
   id: "phishing_level_1_floor_3",
@@ -7,57 +7,62 @@ export const phishingLevel1Floor3: FloorContent = {
   floorNumber: 3,
   title: "Lampiran Berbahaya",
   maxPoints: 4,
+
   map: {
     backgroundClass: "bg-gradient-to-b from-amber-100 to-orange-200",
     playerStart: { x: 20, y: 70 },
     decorations: [
-      { id: "decoration_office_1", x: 80, y: 25, scale: 1.5 },
-      { id: "decoration_tree_3", x: 10, y: 30, scale: 1.3 },
+      { id: "office_1", icon: "office", x: 80, y: 25, scale: 1.5 },
+      { id: "tree_3", icon: "tree", x: 10, y: 30, scale: 1.3 },
+      { id: "coffee_1", icon: "coffee", x: 45, y: 85, scale: 1 },
+      { id: "lamp_3", icon: "lamp", x: 30, y: 15, scale: 1 },
     ],
     object: {
-      id: "object_laptop_1",
+      id: "laptop_1",
       label: "Laptop Kerja",
+      icon: "laptop",
       x: 60,
       y: 45,
       interactionRadius: 8,
     },
   },
+
   story: {
     intro: [
-      { text: "Kucing membuka laptop kerja." },
-      { text: "Ada email dari HRD-Perusahaan dengan lampiran Slip_Gaji_2026.zip." },
-      { text: "Kucing biasanya tidak pernah menerima slip gaji lewat lampiran zip dari HRD." },
-      { text: "Kucing harus memutuskan apa yang akan dilakukan." },
+      { text: "Keesokan harinya di kantor, Kael membuka laptop kerjanya seperti biasa." },
+      { text: "Satu email masuk dari pengirim bernama HRD-Perusahaan, dengan lampiran bernama Slip_Gaji_2026.zip." },
+      { text: "Kael mengernyit. Selama ini slip gaji selalu dikirim lewat portal internal perusahaan, bukan lampiran email." },
+      { text: "Ia teringat pelajaran dari email hadiah dan SMS bank kemarin: penipu suka menyamar sebagai pihak yang dipercaya." },
     ],
-    question: "Apa yang akan dilakukan kucing?",
+    question: "Apa yang akan dilakukan Kael?",
     choices: [
       {
         id: "safe",
-        label: "Hapus email dan konfirmasi ke HRD via jalur resmi.",
+        label: "Tidak membuka lampiran, lalu konfirmasi ke HRD melalui jalur resmi.",
         points: 4,
         result: [
-          { text: "Kucing menelepon HRD langsung via nomor resmi." },
-          { text: "HRD mengonfirmasi tidak pernah mengirim email itu." },
-          { text: "Serangan lewat lampiran berhasil dicegah." },
+          { text: "Kael tidak menyentuh lampiran itu sama sekali." },
+          { text: "Ia menelepon HRD lewat nomor resmi yang tertera di portal internal perusahaan." },
+          { text: "HRD mengonfirmasi tidak pernah mengirim email tersebut. Email itu segera dilaporkan ke tim IT." },
         ],
       },
       {
         id: "neutral",
-        label: "Biarkan email tanpa dibuka.",
+        label: "Membiarkan email tanpa dibuka.",
         points: 1,
         result: [
-          { text: "Email dibiarkan begitu saja di inbox." },
-          { text: "Risiko tetap ada jika nanti terklik tidak sengaja." },
+          { text: "Kael membiarkan email itu begitu saja di kotak masuk, tanpa membuka maupun melaporkannya." },
+          { text: "Risikonya belum hilang. Jika suatu hari ia lupa dan mengklik lampiran itu tanpa sengaja, ancamannya tetap ada." },
         ],
       },
       {
         id: "risky",
-        label: "Ekstrak dan buka file zip.",
-        points: -2,
+        label: "Mengekstrak dan membuka file zip.",
+        points: -6,
         result: [
-          { text: "Kucing mengekstrak file zip tersebut." },
-          { text: "File berisi malware yang mengenkripsi laptop." },
-          { text: "Data kerja kucing terancam ransomware." },
+          { text: "Karena penasaran dan terburu-buru, Kael langsung mengekstrak file zip tersebut." },
+          { text: "Ternyata file itu berisi program jahat yang langsung mengenkripsi seluruh berkas di laptopnya." },
+          { text: "Semua dokumen kerja Kael terkunci, dan muncul pesan permintaan tebusan di layar." },
         ],
       },
     ],

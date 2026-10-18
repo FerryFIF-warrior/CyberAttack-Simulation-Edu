@@ -184,22 +184,23 @@ class SimulationAttemptTest extends TestCase
 
     public function test_attempt_keeps_next_level_locked_when_score_just_below_threshold(): void
     {
-        // Boundary: skor 19 dengan threshold 20 harus tetap terkunci
+        // Boundary: skor 17 (4+4+4+4+1) dengan threshold 20 harus tetap terkunci.
+        // Pakai bruteforce karena poin netral per-floor-nya seragam (=1).
         $this->app['config']->set('simulation.level_unlock_threshold', 20);
 
         $user = User::factory()->create();
         $this->actingAs($user);
 
         foreach ([1, 2, 3, 4] as $floor) {
-            $this->postJson("/api/simulations/phishing/levels/1/floors/{$floor}/attempt", [
+            $this->postJson("/api/simulations/bruteforce/levels/1/floors/{$floor}/attempt", [
                 'choice_id' => 'safe',
             ])->assertOk();
         }
-        $this->postJson('/api/simulations/phishing/levels/1/floors/5/attempt', [
+        $this->postJson('/api/simulations/bruteforce/levels/1/floors/5/attempt', [
             'choice_id' => 'neutral',
         ])->assertOk();
 
-        $progress = $user->simulationProgress()->where('simulation_id', 'phishing')->first()->progress_data;
+        $progress = $user->simulationProgress()->where('simulation_id', 'bruteforce')->first()->progress_data;
 
         $this->assertSame(17, $progress['levels'][0]['level_score']);
         $this->assertFalse($progress['levels'][1]['unlocked']);

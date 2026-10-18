@@ -9,6 +9,16 @@ import { bruteforceLevel1Floor2 } from "./bruteforce/level-1/floor-2";
 import { bruteforceLevel1Floor3 } from "./bruteforce/level-1/floor-3";
 import { bruteforceLevel1Floor4 } from "./bruteforce/level-1/floor-4";
 import { bruteforceLevel1Floor5 } from "./bruteforce/level-1/floor-5";
+import { sqliLevel1Floor1 } from "./sqli/level-1/floor-1";
+import { sqliLevel1Floor2 } from "./sqli/level-1/floor-2";
+import { sqliLevel1Floor3 } from "./sqli/level-1/floor-3";
+import { sqliLevel1Floor4 } from "./sqli/level-1/floor-4";
+import { sqliLevel1Floor5 } from "./sqli/level-1/floor-5";
+import { authLevel1Floor1 } from "./auth/level-1/floor-1";
+import { authLevel1Floor2 } from "./auth/level-1/floor-2";
+import { authLevel1Floor3 } from "./auth/level-1/floor-3";
+import { authLevel1Floor4 } from "./auth/level-1/floor-4";
+import { authLevel1Floor5 } from "./auth/level-1/floor-5";
 
 const allFloors: FloorContent[] = [
   phishingLevel1Floor1,
@@ -21,6 +31,16 @@ const allFloors: FloorContent[] = [
   bruteforceLevel1Floor3,
   bruteforceLevel1Floor4,
   bruteforceLevel1Floor5,
+  sqliLevel1Floor1,
+  sqliLevel1Floor2,
+  sqliLevel1Floor3,
+  sqliLevel1Floor4,
+  sqliLevel1Floor5,
+  authLevel1Floor1,
+  authLevel1Floor2,
+  authLevel1Floor3,
+  authLevel1Floor4,
+  authLevel1Floor5,
 ];
 
 export function findFloorContent(

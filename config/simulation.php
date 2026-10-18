@@ -87,6 +87,55 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Poin per pilihan untuk floor tertentu (menimpa choice_points global).
+    | Struktur: simulationId -> levelNumber -> floorNumber -> choiceId => poin.
+    | Nilai ini HARUS sinkron dengan `points` di file konten TS
+    | resources/js/features/simulation/data/{sim}/level-{l}/floor-{n}.ts
+    | (dicegah test FloorContentSyncTest).
+    | Floor yang tidak dicantumkan di sini memakai choice_points global.
+    |--------------------------------------------------------------------------
+    */
+    'floor_choice_points' => [
+        'phishing' => [
+            1 => [
+                1 => ['safe' => 4, 'neutral' => 1, 'risky' => -2],
+                2 => ['safe' => 4, 'neutral' => 1, 'risky' => -4],
+                3 => ['safe' => 4, 'neutral' => 1, 'risky' => -6],
+                4 => ['safe' => 4, 'neutral' => 1, 'risky' => -4],
+                5 => ['safe' => 4, 'neutral' => 0, 'risky' => -5],
+            ],
+        ],
+        'bruteforce' => [
+            1 => [
+                1 => ['safe' => 4, 'neutral' => 1, 'risky' => -2],
+                2 => ['safe' => 4, 'neutral' => 1, 'risky' => -2],
+                3 => ['safe' => 4, 'neutral' => 1, 'risky' => -2],
+                4 => ['safe' => 4, 'neutral' => 1, 'risky' => -2],
+                5 => ['safe' => 4, 'neutral' => 1, 'risky' => -2],
+            ],
+        ],
+        'sqli' => [
+            1 => [
+                1 => ['safe' => 4, 'neutral' => 1, 'risky' => 0],
+                2 => ['safe' => 4, 'neutral' => 1, 'risky' => -2],
+                3 => ['safe' => 4, 'neutral' => 1, 'risky' => -2],
+                4 => ['safe' => 4, 'neutral' => 1, 'risky' => -2],
+                5 => ['safe' => 4, 'neutral' => 1, 'risky' => -2],
+            ],
+        ],
+        'auth' => [
+            1 => [
+                1 => ['safe' => 4, 'neutral' => 1, 'risky' => -2],
+                2 => ['safe' => 4, 'neutral' => 1, 'risky' => -2],
+                3 => ['safe' => 4, 'neutral' => 1, 'risky' => -2],
+                4 => ['safe' => 4, 'neutral' => 1, 'risky' => -2],
+                5 => ['safe' => 4, 'neutral' => 1, 'risky' => -2],
+            ],
+        ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Konfigurasi level per simulasi (5 level; floorCount & maxScore).
     |--------------------------------------------------------------------------
     */

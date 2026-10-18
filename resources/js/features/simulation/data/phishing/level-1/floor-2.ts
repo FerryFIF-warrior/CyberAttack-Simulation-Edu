@@ -1,4 +1,4 @@
-import type { FloorContent } from "@/features/simulation/types/simulation";
+﻿import type { FloorContent } from "@/features/simulation/types/simulation";
 
 export const phishingLevel1Floor2: FloorContent = {
   id: "phishing_level_1_floor_2",
@@ -7,38 +7,43 @@ export const phishingLevel1Floor2: FloorContent = {
   floorNumber: 2,
   title: "SMS Phishing Mengatasnamakan Bank",
   maxPoints: 4,
+
   map: {
     backgroundClass: "bg-gradient-to-b from-blue-100 to-sky-200",
     playerStart: { x: 15, y: 75 },
     decorations: [
-      { id: "decoration_bank_1", x: 80, y: 20, scale: 1.6 },
-      { id: "decoration_tree_2", x: 15, y: 25, scale: 1.2 },
+      { id: "bank_1", icon: "bank", x: 80, y: 20, scale: 1.6 },
+      { id: "tree_2", icon: "tree", x: 15, y: 25, scale: 1.2 },
+      { id: "bench_1", icon: "bench", x: 50, y: 85, scale: 1 },
+      { id: "lamp_2", icon: "lamp", x: 35, y: 15, scale: 1 },
     ],
     object: {
-      id: "object_phone_1",
+      id: "phone_1",
       label: "Ponsel",
+      icon: "phone",
       x: 55,
       y: 50,
       interactionRadius: 8,
     },
   },
+
   story: {
     intro: [
-      { text: "Kucing mendapatkan SMS dari nomor tidak dikenal yang mengatasnamakan Bank B." },
-      { text: "SMS berkata: Akun Anda diblokir. Verifikasi di bit.ly/verif-bank." },
-      { text: "Pengirim: 62812-XXXX-XXXX, nomor tidak dikenal dan bukan nomor resmi bank." },
-      { text: "Kucing harus memutuskan apa yang akan dilakukan." },
+      { text: "Sore harinya, ponsel Kael bergetar. Satu pesan masuk dari nomor yang tidak ia kenal, mengatasnamakan Bank B." },
+      { text: "Pesan itu berbunyi: Akun Anda diblokir karena aktivitas mencurigakan. Verifikasi segera di bit.ly/verif-bank agar tidak kehilangan akses." },
+      { text: "Kael memeriksa nomor pengirim: 62812-XXXX-XXXX, bukan nomor resmi bank yang biasa mengirim notifikasi padanya." },
+      { text: "Setelah kejadian email hadiah kemarin, Kael jadi lebih waspada. Ia mengingat satu hal: bank tidak pernah meminta verifikasi lewat tautan singkat seperti itu." },
     ],
-    question: "Apa yang akan dilakukan kucing?",
+    question: "Apa yang akan dilakukan Kael?",
     choices: [
       {
         id: "safe",
         label: "Buka aplikasi bank resmi langsung, bukan dari link SMS.",
         points: 4,
         result: [
-          { text: "Kucing membuka aplikasi bank resmi." },
-          { text: "Kucing memeriksa mutasi rekening di aplikasi resmi." },
-          { text: "Akun normal, tidak ada masalah. SMS itu phishing." },
+          { text: "Kael mengabaikan tautan di SMS dan membuka aplikasi bank resminya sendiri." },
+          { text: "Ia memeriksa mutasi dan status akunnya langsung dari sana." },
+          { text: "Akunnya baik-baik saja. SMS tadi memang phishing, dan Kael tidak terpancing." },
         ],
       },
       {
@@ -46,18 +51,18 @@ export const phishingLevel1Floor2: FloorContent = {
         label: "Abaikan SMS dan tidak melakukan apa-apa.",
         points: 1,
         result: [
-          { text: "Kucing mengabaikan SMS tersebut." },
-          { text: "Kucing tidak terjebak, tapi tidak melaporkan ke bank." },
+          { text: "Kael memilih tidak membalas maupun membuka tautan itu." },
+          { text: "Ia aman untuk saat ini, tetapi tidak melaporkan nomor tersebut ke pihak bank." },
         ],
       },
       {
         id: "risky",
         label: "Klik link bit.ly dan isi form verifikasi.",
-        points: -2,
+        points: -4,
         result: [
-          { text: "Kucing mengklik shortlink tersebut." },
-          { text: "Situs palsu meminta nomor kartu dan PIN." },
-          { text: "Data perbankan kucing berpotensi dicuri." },
+          { text: "Karena takut akunnya benar-benar diblokir, Kael mengklik tautan singkat itu." },
+          { text: "Halaman yang muncul meminta nomor kartu dan PIN untuk verifikasi." },
+          { text: "Begitu ia mengisinya, data perbankan Kael langsung berada di tangan yang salah." },
         ],
       },
     ],

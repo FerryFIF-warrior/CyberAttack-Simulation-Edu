@@ -176,7 +176,8 @@ class SimulationAttemptController extends Controller
         if ($floorNumber < 1 || $floorNumber > ($levelConfig['floorCount'] ?? 0)) {
             return null;
         }
-        $choicePoints = config('simulation.choice_points', ['safe' => 4, 'neutral' => 1, 'risky' => -2]);
+        $choicePoints = config('simulation.floor_choice_points.'.$simulationId.'.'.$levelNumber.'.'.$floorNumber)
+            ?? config('simulation.choice_points', ['safe' => 4, 'neutral' => 1, 'risky' => -2]);
         $choices = collect($choicePoints)
             ->map(fn (int $points, string $id) => ['id' => $id, 'points' => $points])
             ->values()
@@ -199,11 +200,12 @@ class SimulationAttemptController extends Controller
         foreach ($levelConfigs as $index => $config) {
             $floors = [];
             for ($i = 1; $i <= $config['floorCount']; $i++) {
+                $floorPoints = config('simulation.floor_choice_points.'.$simulationId.'.'.($index + 1).'.'.$i) ?? $choicePointsForMax;
                 $floors[] = [
                     'floor_number' => $i,
                     'completed' => false,
                     'best_points' => 0,
-                    'max_points' => $maxFloorPoints,
+                    'max_points' => ! empty($floorPoints) ? max($floorPoints) : $maxFloorPoints,
                 ];
             }
             $levels[] = [
