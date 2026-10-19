@@ -8,28 +8,36 @@ class FloorContentSyncTest extends TestCase
 {
     private const SIMULATIONS = ['phishing', 'bruteforce', 'sqli', 'auth'];
 
+    private const LEVELS = [1, 2];
+
+    private const FLOORS_PER_LEVEL = 5;
+
     private const CHOICE_IDS = ['safe', 'neutral', 'risky'];
 
-    public function test_level1_floor_content_files_exist_for_every_lab(): void
+    public function test_floor_content_files_exist_for_every_lab_and_level(): void
     {
         foreach (self::SIMULATIONS as $simulationId) {
-            for ($floor = 1; $floor <= 5; $floor++) {
-                $this->assertFileExists($this->floorPath($simulationId, $floor));
+            foreach (self::LEVELS as $level) {
+                for ($floor = 1; $floor <= self::FLOORS_PER_LEVEL; $floor++) {
+                    $this->assertFileExists($this->floorPath($simulationId, $level, $floor));
+                }
             }
         }
     }
 
-    public function test_level1_floor_content_metadata_matches_registry(): void
+    public function test_floor_content_metadata_matches_registry(): void
     {
         foreach (self::SIMULATIONS as $simulationId) {
-            for ($floor = 1; $floor <= 5; $floor++) {
-                $content = file_get_contents($this->floorPath($simulationId, $floor));
+            foreach (self::LEVELS as $level) {
+                for ($floor = 1; $floor <= self::FLOORS_PER_LEVEL; $floor++) {
+                    $content = file_get_contents($this->floorPath($simulationId, $level, $floor));
 
-                $this->assertStringContainsString(sprintf('id: "%s_level_1_floor_%d"', $simulationId, $floor), $content);
-                $this->assertStringContainsString(sprintf('simulationId: "%s"', $simulationId), $content);
-                $this->assertStringContainsString('levelNumber: 1', $content);
-                $this->assertStringContainsString(sprintf('floorNumber: %d', $floor), $content);
-                $this->assertStringContainsString('from "@/features/simulation/types/simulation"', $content);
+                    $this->assertStringContainsString(sprintf('id: "%s_level_%d_floor_%d"', $simulationId, $level, $floor), $content);
+                    $this->assertStringContainsString(sprintf('simulationId: "%s"', $simulationId), $content);
+                    $this->assertStringContainsString(sprintf('levelNumber: %d', $level), $content);
+                    $this->assertStringContainsString(sprintf('floorNumber: %d', $floor), $content);
+                    $this->assertStringContainsString('from "@/features/simulation/types/simulation"', $content);
+                }
             }
         }
     }
@@ -37,25 +45,27 @@ class FloorContentSyncTest extends TestCase
     public function test_floor_choice_points_config_matches_ts_content_points(): void
     {
         foreach (self::SIMULATIONS as $simulationId) {
-            for ($floor = 1; $floor <= 5; $floor++) {
-                $tsPoints = $this->parseChoicePoints(
-                    file_get_contents($this->floorPath($simulationId, $floor))
-                );
+            foreach (self::LEVELS as $level) {
+                for ($floor = 1; $floor <= self::FLOORS_PER_LEVEL; $floor++) {
+                    $tsPoints = $this->parseChoicePoints(
+                        file_get_contents($this->floorPath($simulationId, $level, $floor))
+                    );
 
-                $this->assertSame(
-                    self::CHOICE_IDS,
-                    array_keys($tsPoints),
-                    "Pilihan di {$simulationId} floor {$floor} harus safe/neutral/risky berurutan."
-                );
+                    $this->assertSame(
+                        self::CHOICE_IDS,
+                        array_keys($tsPoints),
+                        "Pilihan di {$simulationId} level {$level} floor {$floor} harus safe/neutral/risky berurutan."
+                    );
 
-                $configPoints = config(sprintf('simulation.floor_choice_points.%s.1.%d', $simulationId, $floor))
-                    ?? config('simulation.choice_points');
+                    $configPoints = config(sprintf('simulation.floor_choice_points.%s.%d.%d', $simulationId, $level, $floor))
+                        ?? config('simulation.choice_points');
 
-                $this->assertSame(
-                    $tsPoints,
-                    $configPoints,
-                    "Poin config untuk {$simulationId} floor {$floor} tidak sinkron dengan file TS."
-                );
+                    $this->assertSame(
+                        $tsPoints,
+                        $configPoints,
+                        "Poin config untuk {$simulationId} level {$level} floor {$floor} tidak sinkron dengan file TS."
+                    );
+                }
             }
         }
     }
@@ -63,11 +73,33 @@ class FloorContentSyncTest extends TestCase
     public function test_every_floor_declares_max_points_of_four(): void
     {
         foreach (self::SIMULATIONS as $simulationId) {
-            for ($floor = 1; $floor <= 5; $floor++) {
-                $content = file_get_contents($this->floorPath($simulationId, $floor));
+            foreach (self::LEVELS as $level) {
+                for ($floor = 1; $floor <= self::FLOORS_PER_LEVEL; $floor++) {
+                    $content = file_get_contents($this->floorPath($simulationId, $level, $floor));
 
-                $this->assertMatchesRegularExpression('/maxPoints: 4,/', $content);
-                $this->assertSame(4, max($this->parseChoicePoints($content)));
+                    $this->assertMatchesRegularExpression('/maxPoints: 4,/', $content);
+                    $this->assertSame(4, max($this->parseChoicePoints($content)));
+                }
+            }
+        }
+    }
+
+    public function test_every_floor_has_the_configured_floor_count_for_its_level(): void
+    {
+        foreach (self::SIMULATIONS as $simulationId) {
+            foreach (self::LEVELS as $level) {
+                $expectedFloorCount = config(sprintf('simulation.levels.%s.%d.floorCount', $simulationId, $level - 1));
+
+                $this->assertNotNull(
+                    $expectedFloorCount,
+                    "Konfigurasi level {$level} untuk {$simulationId} tidak ditemukan."
+                );
+
+                $this->assertSame(
+                    (int) $expectedFloorCount,
+                    self::FLOORS_PER_LEVEL,
+                    "Konten level {$level} {$simulationId} memuat ".self::FLOORS_PER_LEVEL.' floor, sedangkan config menyatakan '.$expectedFloorCount.'.'
+                );
             }
         }
     }
@@ -92,8 +124,8 @@ class FloorContentSyncTest extends TestCase
         return $points;
     }
 
-    private function floorPath(string $simulationId, int $floor): string
+    private function floorPath(string $simulationId, int $level, int $floor): string
     {
-        return resource_path(sprintf('js/features/simulation/data/%s/level-1/floor-%d.ts', $simulationId, $floor));
+        return resource_path(sprintf('js/features/simulation/data/%s/level-%d/floor-%d.ts', $simulationId, $level, $floor));
     }
 }

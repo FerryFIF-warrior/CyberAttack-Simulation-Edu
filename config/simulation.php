@@ -104,9 +104,23 @@ return [
                 4 => ['safe' => 4, 'neutral' => 1, 'risky' => -4],
                 5 => ['safe' => 4, 'neutral' => 0, 'risky' => -5],
             ],
+            2 => [
+                1 => ['safe' => 4, 'neutral' => 1, 'risky' => -3],
+                2 => ['safe' => 4, 'neutral' => 1, 'risky' => -4],
+                3 => ['safe' => 4, 'neutral' => 1, 'risky' => -4],
+                4 => ['safe' => 4, 'neutral' => 0, 'risky' => -4],
+                5 => ['safe' => 4, 'neutral' => 0, 'risky' => -5],
+            ],
         ],
         'bruteforce' => [
             1 => [
+                1 => ['safe' => 4, 'neutral' => 1, 'risky' => -2],
+                2 => ['safe' => 4, 'neutral' => 1, 'risky' => -2],
+                3 => ['safe' => 4, 'neutral' => 1, 'risky' => -2],
+                4 => ['safe' => 4, 'neutral' => 1, 'risky' => -2],
+                5 => ['safe' => 4, 'neutral' => 1, 'risky' => -2],
+            ],
+            2 => [
                 1 => ['safe' => 4, 'neutral' => 1, 'risky' => -2],
                 2 => ['safe' => 4, 'neutral' => 1, 'risky' => -2],
                 3 => ['safe' => 4, 'neutral' => 1, 'risky' => -2],
@@ -122,9 +136,23 @@ return [
                 4 => ['safe' => 4, 'neutral' => 1, 'risky' => -2],
                 5 => ['safe' => 4, 'neutral' => 1, 'risky' => -2],
             ],
+            2 => [
+                1 => ['safe' => 4, 'neutral' => 1, 'risky' => 0],
+                2 => ['safe' => 4, 'neutral' => 1, 'risky' => -2],
+                3 => ['safe' => 4, 'neutral' => 1, 'risky' => -2],
+                4 => ['safe' => 4, 'neutral' => 1, 'risky' => -2],
+                5 => ['safe' => 4, 'neutral' => 1, 'risky' => -2],
+            ],
         ],
         'auth' => [
             1 => [
+                1 => ['safe' => 4, 'neutral' => 1, 'risky' => -2],
+                2 => ['safe' => 4, 'neutral' => 1, 'risky' => -2],
+                3 => ['safe' => 4, 'neutral' => 1, 'risky' => -2],
+                4 => ['safe' => 4, 'neutral' => 1, 'risky' => -2],
+                5 => ['safe' => 4, 'neutral' => 1, 'risky' => -2],
+            ],
+            2 => [
                 1 => ['safe' => 4, 'neutral' => 1, 'risky' => -2],
                 2 => ['safe' => 4, 'neutral' => 1, 'risky' => -2],
                 3 => ['safe' => 4, 'neutral' => 1, 'risky' => -2],

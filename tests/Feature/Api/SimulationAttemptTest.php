@@ -246,7 +246,7 @@ class SimulationAttemptTest extends TestCase
             ])->assertOk();
         }
 
-        // Level 2 hanya netral (5) — di bawah max 20
+        // Level 2 hanya netral (3) — di bawah max 20
         foreach ([1, 2, 3, 4, 5] as $floor) {
             $this->postJson("/api/simulations/phishing/levels/2/floors/{$floor}/attempt", [
                 'choice_id' => 'neutral',
@@ -256,7 +256,7 @@ class SimulationAttemptTest extends TestCase
         $progress = $user->simulationProgress()->where('simulation_id', 'phishing')->first()->progress_data;
 
         $this->assertSame(20, $progress['levels'][0]['level_score']);
-        $this->assertSame(5, $progress['levels'][1]['level_score']);
+        $this->assertSame(3, $progress['levels'][1]['level_score']);
         $this->assertNotContains('beginner', $progress['earned_badges']);
         $this->assertNotContains('suhu', $progress['earned_badges']);
     }
