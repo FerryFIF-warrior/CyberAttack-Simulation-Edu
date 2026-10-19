@@ -18,6 +18,8 @@ import { ChoicePanel } from "@/features/simulation/components/ChoicePanel";
 import { PointSummary } from "@/features/simulation/components/PointSummary";
 import { submitFloorAttempt, FloorLockedError } from "@/features/simulation/lib/api";
 import type { AttemptResponse } from "@/features/simulation/lib/api";
+import { SecurityLogList } from "@/features/security-log/components/SecurityLogList";
+import type { SecurityLogEntry } from "@/features/security-log/types";
 
 interface PlayFloorProps {
   simulationId: string;
@@ -47,6 +49,7 @@ export default function PlayFloor({
   const [attemptResult, setAttemptResult] = useState<AttemptResponse | null>(null);
   const [submitState, setSubmitState] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [postLockedFloor, setPostLockedFloor] = useState<number | null>(null);
+  const [recentLogs, setRecentLogs] = useState<SecurityLogEntry[]>([]);
   const submittingRef = useRef(false);
   const isLastFloor = floor === floorCount;
   const nextFloorHasContent = !isLastFloor && findFloorContent(simulationId, level, floor + 1) !== null;
@@ -200,6 +203,21 @@ export default function PlayFloor({
       );
       setAttemptResult(result);
       setSubmitState("saved");
+      setRecentLogs((prev) =>
+        [
+          {
+            id: Date.now(),
+            simulation_id: simulationId,
+            level_number: level,
+            floor_number: floor,
+            event: "floor_attempt",
+            choice_id: selectedChoice as "safe" | "neutral" | "risky",
+            points: result.floor_points,
+            created_at: new Date().toISOString(),
+          },
+          ...prev,
+        ].slice(0, 3),
+      );
       return true;
     } catch (error) {
       if (error instanceof FloorLockedError) {
@@ -376,6 +394,37 @@ export default function PlayFloor({
           </Link>
         </div>
       </header>
+
+      {recentLogs.length > 0 && (
+        <aside className="fixed right-4 top-[68px] z-40 hidden w-72 md:block" aria-label="Log terbaru">
+          <div
+            className="p-3"
+            style={{
+              background: "#162030",
+              border: "3px solid #233044",
+              borderRadius: 20,
+              boxShadow: "0 18px 36px rgba(0,0,0,0.55),inset 0 1.5px 0 rgba(255,255,255,0.08)",
+            }}
+          >
+            <div className="flex items-center justify-between mb-2">
+              <p
+                className="text-[10px] font-extrabold tracking-[0.16em] uppercase"
+                style={{ color: "#8b98ab", fontFamily: "'Space Mono',monospace" }}
+              >
+                Log Terbaru
+              </p>
+              <Link
+                href="/security-log"
+                className="text-[10px] font-extrabold tracking-wider uppercase"
+                style={{ color: "#00e5ff", fontFamily: "'Space Mono',monospace" }}
+              >
+                Semua
+              </Link>
+            </div>
+            <SecurityLogList logs={recentLogs} />
+          </div>
+        </aside>
+      )}
 
       {/* Game Area - Fixed Screen Layout, centered vertically */}
       <main className="flex-1 flex items-center justify-center pt-3 sm:pt-4 pb-24 sm:pb-28 px-3 sm:px-4 overflow-hidden relative z-10">

@@ -1,4 +1,5 @@
 import type { SimulationId } from "@/features/simulation/types/simulation";
+import type { SecurityLogEntry, SecurityLogsResponse } from "@/features/security-log/types";
 
 export type { SimulationId };
 
@@ -88,4 +89,23 @@ export async function submitFloorAttempt(
     }
 
     return response.json();
+}
+
+export async function fetchSecurityLogs(simulationId?: SimulationId): Promise<SecurityLogEntry[]> {
+    const query = simulationId ? `?simulation_id=${encodeURIComponent(simulationId)}` : "";
+    const response = await fetchWithCsrf(`${API_BASE}/me/security-logs${query}`, {
+        method: "GET",
+    });
+
+    if (!response.ok) {
+        if (response.status === 401) {
+            window.location.href = "/login";
+            throw new Error("Sesi Anda telah berakhir. Silakan login kembali.");
+        }
+        throw new Error(`HTTP ${response.status}`);
+    }
+
+    const body: SecurityLogsResponse = await response.json();
+
+    return body.logs ?? [];
 }

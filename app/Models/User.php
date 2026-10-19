@@ -111,4 +111,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(SimulationProgress::class);
     }
+
+    public function simulationLogs(): HasMany
+    {
+        return $this->hasMany(SimulationLog::class);
+    }
 }

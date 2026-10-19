@@ -6,4 +6,5 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['auth', 'auth:sanctum', 'throttle:60,1'])->group(function () {
     Route::post('/simulations/{simulationId}/levels/{levelNumber}/floors/{floorNumber}/attempt', [SimulationAttemptController::class, 'attempt']);
     Route::get('/me/simulation-progress', [SimulationAttemptController::class, 'progress']);
+    Route::get('/me/security-logs', [SimulationAttemptController::class, 'securityLogs']);
 });

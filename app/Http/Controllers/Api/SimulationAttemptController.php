@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\SimulationLog;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -130,6 +131,16 @@ class SimulationAttemptController extends Controller
             ]);
         }
 
+        SimulationLog::create([
+            'user_id' => $user->id,
+            'simulation_id' => $simulationId,
+            'level_number' => $levelNumber,
+            'floor_number' => $floorNumber,
+            'event' => 'floor_attempt',
+            'choice_id' => $validated['choice_id'],
+            'points' => $floorPoints,
+        ]);
+
         $isLastFloor = $floorNumber === $levelConfig['floorCount'];
         $nextLevelUnlocked = false;
         if ($isLastFloor && isset($progressData['levels'][$levelIndex + 1])) {
@@ -163,6 +174,31 @@ class SimulationAttemptController extends Controller
         return response()->json([
             'success' => true,
             'progress' => $result,
+        ]);
+    }
+
+    public function securityLogs(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        if (! $user) {
+            return response()->json(['success' => false, 'message' => 'Unauthenticated'], 401);
+        }
+
+        $query = $user->simulationLogs()->latest('id');
+
+        if ($simulationId = $request->query('simulation_id')) {
+            $query->where('simulation_id', $simulationId);
+        }
+
+        $logs = $query
+            ->limit(200)
+            ->get()
+            ->map(fn (SimulationLog $log) => $log->toLogArray())
+            ->all();
+
+        return response()->json([
+            'success' => true,
+            'logs' => $logs,
         ]);
     }
 

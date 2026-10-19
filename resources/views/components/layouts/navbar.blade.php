@@ -1,22 +1,28 @@
 @php
     $isLanding = request()->routeIs('landing');
+    $user = auth()->user();
 
-    $links = $isLanding
-        ? [
+    if ($isLanding) {
+        $links = [
             ['label' => 'Home', 'href' => route('landing'), 'active' => true],
             ['label' => 'About', 'href' => route('about'), 'active' => request()->routeIs('about')],
             ['label' => 'Learning', 'href' => route('learning'), 'active' => request()->routeIs('learning')],
             ['label' => 'Simulasi', 'href' => route('simulasi.index'), 'active' => request()->routeIs('simulasi.*')],
             ['label' => 'Dashboard', 'href' => route('dashboard'), 'active' => false],
-        ]
-        : [
+        ];
+    } else {
+        $links = [
             ['label' => 'Home', 'href' => route('dashboard'), 'active' => request()->routeIs('dashboard')],
             ['label' => 'About', 'href' => route('about'), 'active' => request()->routeIs('about')],
             ['label' => 'Learning', 'href' => route('learning'), 'active' => request()->routeIs('learning')],
             ['label' => 'Simulasi', 'href' => route('simulasi.index'), 'active' => request()->routeIs('simulasi.*')],
         ];
 
-    $user = auth()->user();
+        if ($user) {
+            $links[] = ['label' => 'Log', 'href' => route('security-log'), 'active' => request()->routeIs('security-log')];
+        }
+    }
+
     $progression = $user ? $user->progression() : null;
     $badgeLabels = ['beginner' => 'Pemula', 'suhu' => 'Suhu Sandbox'];
 @endphp
