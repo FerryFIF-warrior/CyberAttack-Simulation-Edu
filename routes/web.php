@@ -11,11 +11,12 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SecurityLogController;
 use App\Http\Controllers\SimulationController;
 use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 
 Route::get('/', LandingController::class)->name('landing');
 
 Route::view('/about', 'about')->name('about');
-Route::view('/learning', 'learning')->name('learning');
+Route::get('/learning', fn () => Inertia::render('Learning/Index'))->name('learning');
 
 Route::middleware('guest')->group(function () {
     Route::get('login', [LoginController::class, 'create'])->name('login');
