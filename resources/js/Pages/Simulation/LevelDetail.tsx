@@ -1,6 +1,8 @@
 import { Head, Link } from "@inertiajs/react";
+import { useCallback, useState } from "react";
 import { Card } from "@/shared/components/Card";
 import { hasFloorContent } from "@/features/simulation/data/registry";
+import { HowToPlayModal, hasSeenHowToPlay, markHowToPlaySeen } from "@/features/simulation/components/HowToPlayModal";
 import type { LabMeta } from "@/features/simulation/types/simulation";
 
 interface LevelDetailProps {
@@ -70,6 +72,12 @@ function FloorNode({ floor, simulationId, level, isLast }: { floor: LevelDetailP
 }
 
 export default function LevelDetail({ simulationId, level, maxScore, unlocked, completed, levelScore, unlockThreshold, lab: meta, floors }: LevelDetailProps) {
+  const [howToOpen, setHowToOpen] = useState(() => level === 1 && !hasSeenHowToPlay(simulationId));
+  const closeHowToPlay = useCallback(() => {
+    setHowToOpen(false);
+    markHowToPlaySeen(simulationId);
+  }, [simulationId]);
+
   if (!unlocked) {
     return (
       <div className="min-h-screen bg-clay-bg flex items-center justify-center p-4 sm:p-6">
@@ -157,13 +165,25 @@ export default function LevelDetail({ simulationId, level, maxScore, unlocked, c
         </div></div>
 
         <div className="mt-4 flex flex-col sm:flex-row gap-3 sm:justify-between sm:items-center" style={{ animation: "breachWarp 520ms cubic-bezier(0.16,1,0.3,1) 340ms both" }}>
-          <Link href={`/simulasi/${simulationId}`} className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-clay-inset border border-clay-line text-slate-200 font-medium text-sm hover:border-[#00e5ff]/20">← Daftar level</Link>
+          <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
+            <Link href={`/simulasi/${simulationId}`} className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-clay-inset border border-clay-line text-slate-200 font-medium text-sm hover:border-[#00e5ff]/20">← Daftar level</Link>
+            <button
+              type="button"
+              onClick={() => setHowToOpen(true)}
+              className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-clay-inset border border-clay-line text-slate-200 font-medium text-sm hover:border-[#00e5ff]/20"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" strokeWidth={1.8} /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M9.6 9.2a2.5 2.5 0 1 1 3.4 2.4c-.7.3-1 .8-1 1.6" /><circle cx="12" cy="16.8" r="0.9" fill="currentColor" stroke="none" /></svg>
+              Cara Bermain
+            </button>
+          </div>
           {floors.filter(f=>f.playable && !f.completed && hasFloorContent(simulationId, level, f.floorNumber)).length > 0 && (
             <Link href={`/simulasi/${simulationId}/level/${level}/floor/${floors.find(f=>f.playable && !f.completed && hasFloorContent(simulationId, level, f.floorNumber))!.floorNumber}`} className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-[#ffd23a] text-[#1a1400] font-semibold text-sm hover:brightness-110 shadow-[0_0_18px_rgba(0,229,255,0.18)]">
               Lanjut floor berikutnya <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
             </Link>
           )}
         </div>
+
+        <HowToPlayModal open={howToOpen} onClose={closeHowToPlay} />
       </div>
     </div>
   );

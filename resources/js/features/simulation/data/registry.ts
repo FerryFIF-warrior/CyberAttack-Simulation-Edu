@@ -91,6 +91,34 @@ import { authLevel4Floor4 } from "./auth/level-4/floor-4";
 import { authLevel4Floor5 } from "./auth/level-4/floor-5";
 import { authLevel4Floor6 } from "./auth/level-4/floor-6";
 import { authLevel4Floor7 } from "./auth/level-4/floor-7";
+import { phishingLevel5Floor1 } from "./phishing/level-5/floor-1";
+import { phishingLevel5Floor2 } from "./phishing/level-5/floor-2";
+import { phishingLevel5Floor3 } from "./phishing/level-5/floor-3";
+import { phishingLevel5Floor4 } from "./phishing/level-5/floor-4";
+import { phishingLevel5Floor5 } from "./phishing/level-5/floor-5";
+import { phishingLevel5Floor6 } from "./phishing/level-5/floor-6";
+import { phishingLevel5Floor7 } from "./phishing/level-5/floor-7";
+import { bruteforceLevel5Floor1 } from "./bruteforce/level-5/floor-1";
+import { bruteforceLevel5Floor2 } from "./bruteforce/level-5/floor-2";
+import { bruteforceLevel5Floor3 } from "./bruteforce/level-5/floor-3";
+import { bruteforceLevel5Floor4 } from "./bruteforce/level-5/floor-4";
+import { bruteforceLevel5Floor5 } from "./bruteforce/level-5/floor-5";
+import { bruteforceLevel5Floor6 } from "./bruteforce/level-5/floor-6";
+import { bruteforceLevel5Floor7 } from "./bruteforce/level-5/floor-7";
+import { sqliLevel5Floor1 } from "./sqli/level-5/floor-1";
+import { sqliLevel5Floor2 } from "./sqli/level-5/floor-2";
+import { sqliLevel5Floor3 } from "./sqli/level-5/floor-3";
+import { sqliLevel5Floor4 } from "./sqli/level-5/floor-4";
+import { sqliLevel5Floor5 } from "./sqli/level-5/floor-5";
+import { sqliLevel5Floor6 } from "./sqli/level-5/floor-6";
+import { sqliLevel5Floor7 } from "./sqli/level-5/floor-7";
+import { authLevel5Floor1 } from "./auth/level-5/floor-1";
+import { authLevel5Floor2 } from "./auth/level-5/floor-2";
+import { authLevel5Floor3 } from "./auth/level-5/floor-3";
+import { authLevel5Floor4 } from "./auth/level-5/floor-4";
+import { authLevel5Floor5 } from "./auth/level-5/floor-5";
+import { authLevel5Floor6 } from "./auth/level-5/floor-6";
+import { authLevel5Floor7 } from "./auth/level-5/floor-7";
 
 const allFloors: FloorContent[] = [
   phishingLevel1Floor1,
@@ -185,6 +213,34 @@ const allFloors: FloorContent[] = [
   authLevel4Floor5,
   authLevel4Floor6,
   authLevel4Floor7,
+  phishingLevel5Floor1,
+  phishingLevel5Floor2,
+  phishingLevel5Floor3,
+  phishingLevel5Floor4,
+  phishingLevel5Floor5,
+  phishingLevel5Floor6,
+  phishingLevel5Floor7,
+  bruteforceLevel5Floor1,
+  bruteforceLevel5Floor2,
+  bruteforceLevel5Floor3,
+  bruteforceLevel5Floor4,
+  bruteforceLevel5Floor5,
+  bruteforceLevel5Floor6,
+  bruteforceLevel5Floor7,
+  sqliLevel5Floor1,
+  sqliLevel5Floor2,
+  sqliLevel5Floor3,
+  sqliLevel5Floor4,
+  sqliLevel5Floor5,
+  sqliLevel5Floor6,
+  sqliLevel5Floor7,
+  authLevel5Floor1,
+  authLevel5Floor2,
+  authLevel5Floor3,
+  authLevel5Floor4,
+  authLevel5Floor5,
+  authLevel5Floor6,
+  authLevel5Floor7,
 ];
 
 export function findFloorContent(

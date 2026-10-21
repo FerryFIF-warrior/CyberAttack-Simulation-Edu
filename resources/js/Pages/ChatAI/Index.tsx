@@ -3,9 +3,17 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { ChatComposer } from "@/features/chat/components/ChatComposer";
 import { LoadingDots } from "@/features/chat/components/LoadingDots";
 import { MessageBubble } from "@/features/chat/components/MessageBubble";
+import {
+    createChatSession,
+    deleteChatSession,
+    fetchChatMessages,
+    formatSessionDate,
+    messageOf,
+    sendChatFeedback,
+    sendChatMessage,
+} from "@/features/chat/lib/api";
 import type {
     ChatMessage,
-    ChatSendResponse,
     ChatSessionSummary,
     FlashMessage,
 } from "@/features/chat/types";
@@ -21,52 +29,6 @@ const SAMPLE_QUESTIONS = [
     "Bagaimana MFA melindungi akun dari credential stuffing?",
     "Mengapa prepared statement mencegah SQL Injection?",
 ];
-
-function csrfToken(): string {
-    return document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content ?? "";
-}
-
-async function requestJson<T>(url: string, method: string, body?: unknown): Promise<T> {
-    const response = await fetch(url, {
-        method,
-        credentials: "same-origin",
-        headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-            "X-Requested-With": "XMLHttpRequest",
-            "X-CSRF-TOKEN": csrfToken(),
-        },
-        body: body === undefined ? undefined : JSON.stringify(body),
-    });
-
-    if (!response.ok) {
-        let message = "Permintaan gagal diproses.";
-        try {
-            const data = (await response.json()) as { message?: string; errors?: Record<string, string[]> };
-            message = data.message ?? data.errors?.question?.[0] ?? message;
-        } catch {
-            // Respons non-JSON tetap memakai pesan umum.
-        }
-        throw new Error(message);
-    }
-
-    return (await response.json()) as T;
-}
-
-function messageOf(error: unknown): string {
-    return error instanceof Error ? error.message : "Terjadi kesalahan. Coba lagi.";
-}
-
-function formatSessionDate(value: string | null): string {
-    if (!value) {
-        return "";
-    }
-    const date = new Date(value);
-    if (Number.isNaN(date.getTime())) {
-        return "";
-    }
-    return date.toLocaleDateString("id-ID", { day: "2-digit", month: "short" });
-}
 
 export default function ChatAIIndex({ sessions, flash }: ChatAIIndexProps) {
     const [sessionList, setSessionList] = useState<ChatSessionSummary[]>(sessions);
@@ -86,10 +48,7 @@ export default function ChatAIIndex({ sessions, flash }: ChatAIIndexProps) {
         setLoadingMessages(true);
         setBanner(null);
         try {
-            const data = await requestJson<{ messages: ChatMessage[] }>(
-                `/chat/sessions/${sessionId}/messages`,
-                "GET",
-            );
+            const data = await fetchChatMessages(sessionId);
             setMessages(data.messages);
         } catch (error) {
             setMessages([]);
@@ -119,7 +78,7 @@ export default function ChatAIIndex({ sessions, flash }: ChatAIIndexProps) {
         setBanner(null);
         setNotice(null);
         try {
-            const data = await requestJson<{ session: ChatSessionSummary }>("/chat/sessions", "POST", {});
+            const data = await createChatSession();
             setSessionList((previous) => [data.session, ...previous]);
             setActiveSessionId(data.session.id);
             setMessages([]);
@@ -137,7 +96,7 @@ export default function ChatAIIndex({ sessions, flash }: ChatAIIndexProps) {
         }
         setDeletingId(sessionId);
         try {
-            await requestJson<{ deleted: boolean }>(`/chat/sessions/${sessionId}`, "DELETE");
+            await deleteChatSession(sessionId);
             const remaining = sessionList.filter((session) => session.id !== sessionId);
             setSessionList(remaining);
             if (activeSessionId === sessionId) {
@@ -174,11 +133,7 @@ export default function ChatAIIndex({ sessions, flash }: ChatAIIndexProps) {
         setNotice(null);
 
         try {
-            const data = await requestJson<ChatSendResponse>(
-                `/chat/sessions/${activeSessionId}/messages`,
-                "POST",
-                { question },
-            );
+            const data = await sendChatMessage(activeSessionId, question);
 
             setMessages((previous) => [
                 ...previous.filter((message) => message.id !== temporaryId),
@@ -221,11 +176,7 @@ export default function ChatAIIndex({ sessions, flash }: ChatAIIndexProps) {
         );
 
         try {
-            await requestJson<{ message: ChatMessage }>(
-                `/chat/messages/${messageId}/feedback`,
-                "PATCH",
-                { feedback },
-            );
+            await sendChatFeedback(messageId, feedback);
         } catch (error) {
             setMessages((previous) =>
                 previous.map((message) =>

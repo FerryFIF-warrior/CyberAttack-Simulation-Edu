@@ -16,6 +16,8 @@ import { NarrativeCat } from "@/features/simulation/components/NarrativeCat";
 import { NarrativePanel } from "@/features/simulation/components/NarrativePanel";
 import { ChoicePanel } from "@/features/simulation/components/ChoicePanel";
 import { PointSummary } from "@/features/simulation/components/PointSummary";
+import { FloatingCat } from "@/features/simulation/components/FloatingCat";
+import { HowToPlayModal, hasSeenHowToPlay, markHowToPlaySeen } from "@/features/simulation/components/HowToPlayModal";
 import { submitFloorAttempt, FloorLockedError } from "@/features/simulation/lib/api";
 import type { AttemptResponse } from "@/features/simulation/lib/api";
 import { SecurityLogList } from "@/features/security-log/components/SecurityLogList";
@@ -50,6 +52,8 @@ export default function PlayFloor({
   const [submitState, setSubmitState] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [postLockedFloor, setPostLockedFloor] = useState<number | null>(null);
   const [recentLogs, setRecentLogs] = useState<SecurityLogEntry[]>([]);
+  const [chatOpen, setChatOpen] = useState(false);
+  const [howToOpen, setHowToOpen] = useState(() => level === 1 && !hasSeenHowToPlay(simulationId));
   const submittingRef = useRef(false);
   const isLastFloor = floor === floorCount;
   const nextFloorHasContent = !isLastFloor && findFloorContent(simulationId, level, floor + 1) !== null;
@@ -116,8 +120,23 @@ export default function PlayFloor({
     setPlayerPositionRef.current(clamped);
   }, []);
 
-  // Keyboard movement hook - always called
-  useKeyboardMovement(handleMove, true);
+  // Keyboard movement hook - always called (dinonaktifkan saat Chat-AI terbuka)
+  useKeyboardMovement(handleMove, !chatOpen);
+
+  const closeHowToPlay = useCallback(() => {
+    setHowToOpen(false);
+    markHowToPlaySeen(simulationId);
+  }, [simulationId]);
+
+  // Tutup dialog narrative saat area luar diklik — posisi pemain TIDAK direset
+  const closeNarrative = useCallback(() => {
+    setMovementLocked(false);
+    setActiveNarrative(null);
+    setActivePanel(0);
+    setSelectedChoice(null);
+    setResultNarrative(null);
+    setPhase("exploring");
+  }, [setMovementLocked, setActiveNarrative, setActivePanel, setSelectedChoice, setResultNarrative, setPhase]);
 
   // Handle keydown on game container for focus
   const handleGameKeyDown: KeyboardEventHandler<HTMLDivElement> = useCallback((event) => {
@@ -144,7 +163,7 @@ export default function PlayFloor({
     playerPosition,
     currentFloorContent?.map.object ?? { x: 0, y: 0, interactionRadius: 8, id: "", label: "" },
     handleInteract,
-    phase === "exploring",
+    phase === "exploring" && !chatOpen,
     movementLocked
   );
 
@@ -377,26 +396,38 @@ export default function PlayFloor({
   const showMap = phase === "exploring";
   const showNarrativeCat = phase !== "exploring" && phase !== "floorCompleted";
   const catPosition = phase === "choosing" ? "left" : "center";
+  const narrativePhaseActive = phase === "preNarrative" || phase === "choosing" || phase === "resultNarrative";
 
   return (
     <div className="min-h-screen bg-clay-bg flex flex-col">
       <Head title={`${floorContent.title} - Level ${level} Floor ${floor}`} />
 
       {/* Fixed Header - Navigation at top */}
-      <header className="sticky top-0 z-50 bg-clay-surface/80 backdrop-blur border-b border-clay-line px-3 sm:px-4 py-2.5 sm:py-3 shadow-[0_4px_20px_rgba(0,0,0,0.3)]">
+      <header className="sticky top-0 z-[60] bg-clay-surface/80 backdrop-blur border-b border-clay-line px-3 sm:px-4 py-2.5 sm:py-3 shadow-[0_4px_20px_rgba(0,0,0,0.3)]">
         <div className="max-w-[960px] mx-auto flex items-center justify-between gap-3">
           <div className="min-w-0"><p className="font-mono text-[10px] tracking-[0.16em] uppercase text-[#00e5ff]">LV {level} · FL {String(floor).padStart(2,"0")}</p><h1 className="text-[14px] sm:text-[15px] font-semibold text-white leading-tight truncate">{floorContent.title}</h1></div>
-          <Link
-            href={`/simulasi/${simulationId}/level/${level}`}
-            className="shrink-0 inline-flex items-center gap-1.5 px-3 sm:px-4 py-2 sm:py-2.5 bg-clay-inset border border-clay-line text-slate-200 rounded-lg hover:border-[#00e5ff]/20 transition-colors text-xs sm:text-sm font-medium"
-          >
-            Kembali ke Level
-          </Link>
+          <div className="flex shrink-0 items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setHowToOpen(true)}
+              aria-label="Cara bermain"
+              className="inline-flex items-center gap-1.5 px-2.5 sm:px-4 py-2 sm:py-2.5 bg-clay-inset border border-clay-line text-slate-200 rounded-lg hover:border-[#00e5ff]/20 transition-colors text-xs sm:text-sm font-medium"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" strokeWidth={1.8} /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M9.6 9.2a2.5 2.5 0 1 1 3.4 2.4c-.7.3-1 .8-1 1.6" /><circle cx="12" cy="16.8" r="0.9" fill="currentColor" stroke="none" /></svg>
+              <span className="hidden sm:inline">Cara Bermain</span>
+            </button>
+            <Link
+              href={`/simulasi/${simulationId}/level/${level}`}
+              className="shrink-0 inline-flex items-center gap-1.5 px-3 sm:px-4 py-2 sm:py-2.5 bg-clay-inset border border-clay-line text-slate-200 rounded-lg hover:border-[#00e5ff]/20 transition-colors text-xs sm:text-sm font-medium"
+            >
+              Kembali ke Level
+            </Link>
+          </div>
         </div>
       </header>
 
       {recentLogs.length > 0 && (
-        <aside className="fixed right-4 top-[68px] z-40 hidden w-72 md:block" aria-label="Log terbaru">
+        <aside className="fixed right-4 top-[120px] z-[65] hidden w-72 md:block" aria-label="Log terbaru">
           <div
             className="p-3"
             style={{
@@ -429,7 +460,7 @@ export default function PlayFloor({
       {/* Game Area - Fixed Screen Layout, centered vertically */}
       <main className="flex-1 flex items-center justify-center pt-3 sm:pt-4 pb-24 sm:pb-28 px-3 sm:px-4 overflow-hidden relative z-10">
         <GameContainer aspectRatio="16 / 9" onKeyDown={handleGameKeyDown}>
-          <MapView floorContent={floorContent} onInteract={handleInteract} />
+          <MapView floorContent={floorContent} />
 
           {/* Player Sprite - only in exploring phase */}
           {showMap && (
@@ -457,8 +488,17 @@ export default function PlayFloor({
         </GameContainer>
 
         {/* Mobile D-Pad - only on mobile, fixed bottom inside game area; tombol E muncul saat dekat objek */}
-        <MobileDPad onMove={handleMove} disabled={movementLocked} onInteract={showPrompt && phase === "exploring" ? handleInteract : undefined} />
+        <MobileDPad onMove={handleMove} disabled={movementLocked} onInteract={showPrompt && phase === "exploring" && !chatOpen ? handleInteract : undefined} />
       </main>
+
+      {/* Backdrop — klik area luar dialog menutup narasi tanpa reset posisi pemain */}
+      {narrativePhaseActive && (
+        <div
+          className="fixed inset-0 z-[25] bg-black/30"
+          onClick={closeNarrative}
+          aria-hidden="true"
+        />
+      )}
 
       {/* Phase-based bottom panels */}
       {phase === "preNarrative" && activeNarrative && (
@@ -467,6 +507,7 @@ export default function PlayFloor({
           currentPanel={activePanel}
           onNext={handleNextPanel}
           nextLabel={activePanel === activeNarrative.length - 1 ? "Lanjut" : "Selanjutnya"}
+          onDismiss={closeNarrative}
         />
       )}
 
@@ -477,6 +518,7 @@ export default function PlayFloor({
             currentPanel={activePanel}
             onNext={() => {}} // Disabled in choosing phase
             nextLabel=""
+            onDismiss={closeNarrative}
           />
           <ChoicePanel
             choices={currentFloorContent.story.choices}
@@ -491,6 +533,7 @@ export default function PlayFloor({
           currentPanel={activePanel}
           onNext={handleNextPanel}
           nextLabel={activePanel === resultNarrative.length - 1 ? "Selesai" : "Selanjutnya"}
+          onDismiss={closeNarrative}
         />
       )}
 
@@ -518,6 +561,11 @@ export default function PlayFloor({
           onContinue={handleContinue}
         />
       )}
+
+      {/* Floating cat — akses Chat-AI saat bermain */}
+      <FloatingCat open={chatOpen} onToggle={() => setChatOpen((previous) => !previous)} />
+
+      <HowToPlayModal open={howToOpen} onClose={closeHowToPlay} />
 
       {floorLockedPopup}
     </div>

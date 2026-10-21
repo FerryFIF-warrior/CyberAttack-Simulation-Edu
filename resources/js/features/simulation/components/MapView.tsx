@@ -2,7 +2,6 @@ import { FloorContent } from "@/features/simulation/types/simulation";
 
 interface MapViewProps {
   floorContent: FloorContent;
-  onInteract?: () => void;
 }
 
 const TreeIcon = () => (
@@ -59,7 +58,7 @@ function getObjectIcon(id: string) {
   return <MailboxIcon />;
 }
 
-export function MapView({ floorContent, onInteract }: MapViewProps) {
+export function MapView({ floorContent }: MapViewProps) {
   const { map } = floorContent;
   const { backgroundClass, decorations, object } = map;
 
@@ -87,9 +86,9 @@ export function MapView({ floorContent, onInteract }: MapViewProps) {
         </div>
       ))}
 
-      {/* Interactive Object */}
+      {/* Interactive Object — interaksi hanya via E/Enter saat dekat (PRD override) */}
       <div
-        className="absolute cursor-pointer transition-transform duration-200 hover:scale-110"
+        className="absolute transition-transform duration-200 hover:scale-110"
         style={{
           left: `${object.x}%`,
           top: `${object.y}%`,
@@ -98,10 +97,6 @@ export function MapView({ floorContent, onInteract }: MapViewProps) {
         }}
         title={object.label}
         data-testid="interactive-object"
-        role={onInteract ? "button" : undefined}
-        tabIndex={onInteract ? 0 : undefined}
-        onClick={onInteract}
-        onKeyDown={onInteract ? (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onInteract(); } } : undefined}
       >
         {getObjectIcon(object.id)}
       </div>

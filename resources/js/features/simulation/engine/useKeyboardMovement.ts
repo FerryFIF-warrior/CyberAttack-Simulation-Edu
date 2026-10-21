@@ -8,6 +8,11 @@ export function useKeyboardMovement(
     if (!enabled) return;
 
     const handleKeyDown = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement | null;
+      if (target && (target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.isContentEditable)) {
+        return;
+      }
+
       const key = event.key.toLowerCase();
 
       if (["arrowup", "w"].includes(key)) {

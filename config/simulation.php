@@ -128,6 +128,15 @@ return [
                 6 => ['safe' => 3, 'neutral' => -1, 'risky' => -3],
                 7 => ['safe' => 2, 'neutral' => -2, 'risky' => -4],
             ],
+            5 => [
+                1 => ['safe' => 3, 'neutral' => -2, 'risky' => -5],
+                2 => ['safe' => 3, 'neutral' => -3, 'risky' => -6],
+                3 => ['safe' => 3, 'neutral' => -3, 'risky' => -6],
+                4 => ['safe' => 3, 'neutral' => -3, 'risky' => -6],
+                5 => ['safe' => 3, 'neutral' => -3, 'risky' => -7],
+                6 => ['safe' => 3, 'neutral' => -2, 'risky' => -5],
+                7 => ['safe' => 2, 'neutral' => -3, 'risky' => -7],
+            ],
         ],
         'bruteforce' => [
             1 => [
@@ -160,6 +169,15 @@ return [
                 5 => ['safe' => 3, 'neutral' => -1, 'risky' => -2],
                 6 => ['safe' => 3, 'neutral' => -1, 'risky' => -2],
                 7 => ['safe' => 2, 'neutral' => -2, 'risky' => -4],
+            ],
+            5 => [
+                1 => ['safe' => 3, 'neutral' => -3, 'risky' => -6],
+                2 => ['safe' => 3, 'neutral' => -4, 'risky' => -8],
+                3 => ['safe' => 3, 'neutral' => -3, 'risky' => -6],
+                4 => ['safe' => 3, 'neutral' => -3, 'risky' => -6],
+                5 => ['safe' => 3, 'neutral' => -3, 'risky' => -5],
+                6 => ['safe' => 3, 'neutral' => -3, 'risky' => -5],
+                7 => ['safe' => 2, 'neutral' => -4, 'risky' => -6],
             ],
         ],
         'sqli' => [
@@ -194,6 +212,15 @@ return [
                 6 => ['safe' => 3, 'neutral' => -1, 'risky' => -2],
                 7 => ['safe' => 2, 'neutral' => -2, 'risky' => -3],
             ],
+            5 => [
+                1 => ['safe' => 3, 'neutral' => -3, 'risky' => -5],
+                2 => ['safe' => 3, 'neutral' => -3, 'risky' => -6],
+                3 => ['safe' => 3, 'neutral' => -3, 'risky' => -5],
+                4 => ['safe' => 3, 'neutral' => -3, 'risky' => -6],
+                5 => ['safe' => 3, 'neutral' => -3, 'risky' => -5],
+                6 => ['safe' => 3, 'neutral' => -4, 'risky' => -7],
+                7 => ['safe' => 2, 'neutral' => -4, 'risky' => -6],
+            ],
         ],
         'auth' => [
             1 => [
@@ -226,6 +253,15 @@ return [
                 5 => ['safe' => 3, 'neutral' => -1, 'risky' => -3],
                 6 => ['safe' => 3, 'neutral' => -1, 'risky' => -3],
                 7 => ['safe' => 2, 'neutral' => -2, 'risky' => -4],
+            ],
+            5 => [
+                1 => ['safe' => 3, 'neutral' => -3, 'risky' => -5],
+                2 => ['safe' => 3, 'neutral' => -3, 'risky' => -6],
+                3 => ['safe' => 3, 'neutral' => -3, 'risky' => -6],
+                4 => ['safe' => 3, 'neutral' => -4, 'risky' => -5],
+                5 => ['safe' => 3, 'neutral' => -4, 'risky' => -7],
+                6 => ['safe' => 3, 'neutral' => -4, 'risky' => -6],
+                7 => ['safe' => 2, 'neutral' => -4, 'risky' => -6],
             ],
         ],
     ],

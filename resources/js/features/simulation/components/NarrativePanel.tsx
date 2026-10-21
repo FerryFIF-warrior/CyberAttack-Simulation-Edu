@@ -1,11 +1,11 @@
 import type { FC } from "react";
-interface NarrativePanelProps { panels: { text: string }[]; currentPanel: number; onNext: ()=>void; nextLabel?: string; className?: string; }
-export const NarrativePanel: FC<NarrativePanelProps> = ({ panels, currentPanel, onNext, nextLabel="Lanjut", className }) => {
+interface NarrativePanelProps { panels: { text: string }[]; currentPanel: number; onNext: ()=>void; nextLabel?: string; className?: string; onDismiss?: ()=>void; }
+export const NarrativePanel: FC<NarrativePanelProps> = ({ panels, currentPanel, onNext, nextLabel="Lanjut", className, onDismiss }) => {
   if(panels.length===0||currentPanel>=panels.length) return null;
   const panel=panels[currentPanel];
   return (
-    <div className={"fixed bottom-0 left-0 right-0 z-30 p-3 sm:p-4 "+(className||"")} style={{ height:"33%" }}>
-      <div className="max-w-4xl mx-auto h-full p-4 flex flex-col" style={{ background:"#162030", border:"3px solid #233044", borderRadius:28, boxShadow:"0 18px 36px rgba(0,0,0,0.55),inset 0 1.5px 0 rgba(255,255,255,0.08)" }}>
+    <div className={"fixed bottom-0 left-0 right-0 z-30 p-3 sm:p-4 "+(className||"")} style={{ height:"33%" }} onClick={onDismiss}>
+      <div className="max-w-4xl mx-auto h-full p-4 flex flex-col" style={{ background:"#162030", border:"3px solid #233044", borderRadius:28, boxShadow:"0 18px 36px rgba(0,0,0,0.55),inset 0 1.5px 0 rgba(255,255,255,0.08)" }} onClick={onDismiss ? (event) => event.stopPropagation() : undefined}>
         <p className="text-[15px] leading-[1.7] text-slate-200">{panel.text}</p>
         <div className="mt-auto flex items-center justify-between pt-3" style={{ borderTop:"2px solid #233044", marginTop:12, paddingTop:12 }}>
           <span style={{ fontFamily:"'Space Mono',monospace", fontSize:11, letterSpacing:"0.12em", color:"#8b98ab" }}>{String(currentPanel+1).padStart(2,"0")} / {String(panels.length).padStart(2,"0")}</span>

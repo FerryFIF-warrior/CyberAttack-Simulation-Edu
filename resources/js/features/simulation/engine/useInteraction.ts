@@ -29,6 +29,11 @@ export function useInteraction(
 
     if (isNear) {
       const handleKeyDown = (event: KeyboardEvent) => {
+        const target = event.target as HTMLElement | null;
+        if (target && (target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.isContentEditable)) {
+          return;
+        }
+
         const key = event.key.toLowerCase();
         if (key === "e" || key === "enter") {
           event.preventDefault();
