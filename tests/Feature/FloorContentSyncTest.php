@@ -8,17 +8,20 @@ class FloorContentSyncTest extends TestCase
 {
     private const SIMULATIONS = ['phishing', 'bruteforce', 'sqli', 'auth'];
 
-    private const LEVELS = [1, 2];
-
-    private const FLOORS_PER_LEVEL = 5;
+    /**
+     * Jumlah floor per level yang wajib ada (harus sinkron dengan simulation.levels).
+     *
+     * @var array<int, int>
+     */
+    private const LEVEL_FLOORS = [1 => 5, 2 => 5, 3 => 6, 4 => 7];
 
     private const CHOICE_IDS = ['safe', 'neutral', 'risky'];
 
     public function test_floor_content_files_exist_for_every_lab_and_level(): void
     {
         foreach (self::SIMULATIONS as $simulationId) {
-            foreach (self::LEVELS as $level) {
-                for ($floor = 1; $floor <= self::FLOORS_PER_LEVEL; $floor++) {
+            foreach (self::LEVEL_FLOORS as $level => $floorCount) {
+                for ($floor = 1; $floor <= $floorCount; $floor++) {
                     $this->assertFileExists($this->floorPath($simulationId, $level, $floor));
                 }
             }
@@ -28,8 +31,8 @@ class FloorContentSyncTest extends TestCase
     public function test_floor_content_metadata_matches_registry(): void
     {
         foreach (self::SIMULATIONS as $simulationId) {
-            foreach (self::LEVELS as $level) {
-                for ($floor = 1; $floor <= self::FLOORS_PER_LEVEL; $floor++) {
+            foreach (self::LEVEL_FLOORS as $level => $floorCount) {
+                for ($floor = 1; $floor <= $floorCount; $floor++) {
                     $content = file_get_contents($this->floorPath($simulationId, $level, $floor));
 
                     $this->assertStringContainsString(sprintf('id: "%s_level_%d_floor_%d"', $simulationId, $level, $floor), $content);
@@ -45,8 +48,8 @@ class FloorContentSyncTest extends TestCase
     public function test_floor_choice_points_config_matches_ts_content_points(): void
     {
         foreach (self::SIMULATIONS as $simulationId) {
-            foreach (self::LEVELS as $level) {
-                for ($floor = 1; $floor <= self::FLOORS_PER_LEVEL; $floor++) {
+            foreach (self::LEVEL_FLOORS as $level => $floorCount) {
+                for ($floor = 1; $floor <= $floorCount; $floor++) {
                     $tsPoints = $this->parseChoicePoints(
                         file_get_contents($this->floorPath($simulationId, $level, $floor))
                     );
@@ -70,15 +73,20 @@ class FloorContentSyncTest extends TestCase
         }
     }
 
-    public function test_every_floor_declares_max_points_of_four(): void
+    public function test_every_floor_declares_max_points_matching_its_choice_points(): void
     {
         foreach (self::SIMULATIONS as $simulationId) {
-            foreach (self::LEVELS as $level) {
-                for ($floor = 1; $floor <= self::FLOORS_PER_LEVEL; $floor++) {
+            foreach (self::LEVEL_FLOORS as $level => $floorCount) {
+                for ($floor = 1; $floor <= $floorCount; $floor++) {
                     $content = file_get_contents($this->floorPath($simulationId, $level, $floor));
+                    $tsPoints = $this->parseChoicePoints($content);
 
-                    $this->assertMatchesRegularExpression('/maxPoints: 4,/', $content);
-                    $this->assertSame(4, max($this->parseChoicePoints($content)));
+                    $this->assertMatchesRegularExpression('/maxPoints: -?\d+,/', $content);
+                    $this->assertSame(
+                        max($tsPoints),
+                        $this->parseMaxPoints($content),
+                        "maxPoints {$simulationId} level {$level} floor {$floor} harus sama dengan poin pilihan tertingginya."
+                    );
                 }
             }
         }
@@ -87,7 +95,7 @@ class FloorContentSyncTest extends TestCase
     public function test_every_floor_has_the_configured_floor_count_for_its_level(): void
     {
         foreach (self::SIMULATIONS as $simulationId) {
-            foreach (self::LEVELS as $level) {
+            foreach (self::LEVEL_FLOORS as $level => $floorCount) {
                 $expectedFloorCount = config(sprintf('simulation.levels.%s.%d.floorCount', $simulationId, $level - 1));
 
                 $this->assertNotNull(
@@ -97,8 +105,8 @@ class FloorContentSyncTest extends TestCase
 
                 $this->assertSame(
                     (int) $expectedFloorCount,
-                    self::FLOORS_PER_LEVEL,
-                    "Konten level {$level} {$simulationId} memuat ".self::FLOORS_PER_LEVEL.' floor, sedangkan config menyatakan '.$expectedFloorCount.'.'
+                    $floorCount,
+                    "Konten level {$level} {$simulationId} memuat {$floorCount} floor, sedangkan config menyatakan {$expectedFloorCount}."
                 );
             }
         }
@@ -122,6 +130,13 @@ class FloorContentSyncTest extends TestCase
         }
 
         return $points;
+    }
+
+    private function parseMaxPoints(string $content): int
+    {
+        preg_match('/maxPoints: (-?\d+),/', $content, $matches);
+
+        return (int) ($matches[1] ?? 0);
     }
 
     private function floorPath(string $simulationId, int $level, int $floor): string

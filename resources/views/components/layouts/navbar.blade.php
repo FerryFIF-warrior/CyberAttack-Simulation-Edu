@@ -20,6 +20,11 @@
 
         if ($user) {
             $links[] = ['label' => 'Log', 'href' => route('security-log'), 'active' => request()->routeIs('security-log')];
+            $links[] = ['label' => 'Chat-AI', 'href' => route('chat-ai'), 'active' => request()->routeIs('chat-ai')];
+
+            if ($user->can('manage-knowledge-base')) {
+                $links[] = ['label' => 'Admin KB', 'href' => route('admin.knowledge-base.index'), 'active' => request()->routeIs('admin.knowledge-base.*')];
+            }
         }
     }
 

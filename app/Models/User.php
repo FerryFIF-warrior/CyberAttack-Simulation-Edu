@@ -116,4 +116,23 @@ class User extends Authenticatable
     {
         return $this->hasMany(SimulationLog::class);
     }
+
+    public function chatSessions(): HasMany
+    {
+        return $this->hasMany(ChatSession::class);
+    }
+
+    /**
+     * Admin knowledge base ditentukan dari allowlist email pada config/ai.php.
+     */
+    public function isAdmin(): bool
+    {
+        $emails = array_map(
+            static fn (string $email): string => strtolower($email),
+            config('ai.admin_emails', []),
+        );
+
+        return $emails !== []
+            && in_array(strtolower((string) $this->email), $emails, true);
+    }
 }

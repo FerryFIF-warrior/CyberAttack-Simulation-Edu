@@ -1,7 +1,10 @@
 <?php
 
+use App\Http\Controllers\Admin\KnowledgeBaseController;
+use App\Http\Controllers\Api\ChatMessageController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\ChatAIController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\ProfileController;
@@ -33,6 +36,22 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::get('/chat-ai', [ChatAIController::class, 'index'])->name('chat-ai');
+    Route::post('/chat/sessions', [ChatMessageController::class, 'storeSession'])->name('chat.sessions.store');
+    Route::get('/chat/sessions/{chatSession}/messages', [ChatMessageController::class, 'messages'])->name('chat.sessions.messages');
+    Route::post('/chat/sessions/{chatSession}/messages', [ChatMessageController::class, 'storeMessage'])
+        ->middleware('throttle:6,1')
+        ->name('chat.messages.store');
+    Route::delete('/chat/sessions/{chatSession}', [ChatMessageController::class, 'destroy'])->name('chat.sessions.destroy');
+    Route::patch('/chat/messages/{chatMessage}/feedback', [ChatMessageController::class, 'updateFeedback'])->name('chat.messages.feedback');
+});
+
+Route::middleware(['auth', 'can:manage-knowledge-base'])->prefix('admin')->group(function () {
+    Route::get('/knowledge-base', [KnowledgeBaseController::class, 'index'])->name('admin.knowledge-base.index');
+    Route::post('/knowledge-base', [KnowledgeBaseController::class, 'store'])->name('admin.knowledge-base.store');
+    Route::delete('/knowledge-base/{documentId}', [KnowledgeBaseController::class, 'destroy'])->name('admin.knowledge-base.destroy');
+    Route::post('/knowledge-base/reindex', [KnowledgeBaseController::class, 'reindex'])->name('admin.knowledge-base.reindex');
 });
 
 Route::middleware('auth')->prefix('simulasi')->group(function () {
