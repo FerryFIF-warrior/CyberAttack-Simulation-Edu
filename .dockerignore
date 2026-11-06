@@ -1,0 +1,13 @@
+.git
+.env
+.env.*
+!.env.example
+node_modules
+vendor
+tests
+.vercel
+.github
+.freebuff
+.playwright-mcp
+public/build
+storage/logs/*.log
