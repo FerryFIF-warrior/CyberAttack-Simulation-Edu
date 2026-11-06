@@ -23,6 +23,7 @@
 /public/storage
 /storage/*.key
 *.pem
+!storage/ssl/*.pem
 *.key
 *.p12
 *.pfx
