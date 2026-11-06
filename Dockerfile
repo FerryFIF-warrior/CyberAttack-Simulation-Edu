@@ -5,7 +5,9 @@ RUN cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini" \
 
 WORKDIR /app
 
-FROM node:22 AS assets
+# node:22 (npm 10) menolak lock file: peer opsional @laravel/multiplex
+# minta @types/react >=19.2 sementara root mengunci ^18 — npm 11+ meloloskan.
+FROM node:24 AS assets
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci
