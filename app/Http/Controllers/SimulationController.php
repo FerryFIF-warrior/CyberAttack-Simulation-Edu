@@ -19,19 +19,23 @@ class SimulationController extends Controller
             1 => [1 => 'Email Hadiah Palsu', 2 => 'SMS Phishing Mengatasnamakan Bank', 3 => 'Lampiran Berbahaya', 4 => 'Urgensi Palsu', 5 => 'Ujian Akhir: Detektif Email'],
             3 => [1 => 'Pengintaian Diam-Diam', 2 => 'Kampanye, Bukan Email Tunggal', 3 => 'Penyamaran Vendor Tepercaya', 4 => 'Jebakan di Rapat Virtual', 5 => 'Tekanan dari Dalam', 6 => 'Ujian Akhir: Memutus Rantai Kampanye'],
             4 => [1 => 'Pengintaian Lintas Platform', 2 => 'Email yang Terlalu Sempurna', 3 => 'Serangan Dua Tahap', 4 => 'Penyamaran Internal yang Terverifikasi Sebagian', 5 => 'Tekanan Waktu dan Otoritas Ganda', 6 => 'Insiden yang Disamarkan sebagai Latihan', 7 => 'Ujian Akhir: Membedakan Kampanye Asli dari Latihan Resmi'],
+            5 => [1 => 'Infrastruktur Phishing Mandiri', 2 => 'Zero-Day Link di Dokumen Sah', 3 => 'Deepfake Audio Verification', 4 => 'Supply Chain Compromise', 5 => 'Serangan Terkoordinasi Global', 6 => 'Eskalasi Privilese via Social Engineering', 7 => 'Ujian Akhir: Krisis Kepercayaan Total'],
         ],
         'bruteforce' => [
             1 => [1 => 'Serangan Dictionary: Password Lemah', 2 => 'Menahan Serangan dengan Rate Limiting', 3 => 'Kunci Akun dengan Account Lockout', 4 => 'Lapisan Tambahan: CAPTCHA & MFA', 5 => 'Ujian Akhir: Pertahanan Berlapis'],
             3 => [1 => 'Pengintaian Infrastruktur', 2 => 'Botnet Terdistribusi', 3 => 'Serangan Meniru Perilaku Manusia', 4 => 'Menyasar API Pihak Ketiga', 5 => 'Respons Insiden Skala Besar', 6 => 'Ujian Akhir: Pertahanan Adaptif'],
             4 => [1 => 'Pengintaian Pola Pertahanan', 2 => 'Serangan Low-and-Slow', 3 => 'Penyusupan Lewat Akun Layanan', 4 => 'False Flag', 5 => 'Celah di Proses Pemulihan Setelah Lockout', 6 => 'Serangan Terkoordinasi Lintas Zona Waktu', 7 => 'Ujian Akhir: Memilah Insiden Nyata dari Gangguan Wajar'],
+            5 => [1 => 'Credential Stuffing Skala Cloud', 2 => 'Serangan Bypass MFA via Sim Swapping Simulation', 3 => 'Penyusupan via OAuth Token Theft', 4 => 'Serangan terhadap Database Hash', 5 => 'Eskalasi ke Lateral Movement', 6 => 'Automated Incident Containment', 7 => 'Ujian Akhir: Pertahanan Benteng Terakhir'],
         ],
         'sqli' => [
             3 => [1 => 'Injeksi Tertunda', 2 => 'Menukar Label Kewenangan', 3 => 'Mengirim Kabar Lewat Jalur Lain', 4 => 'Jejak yang Bukan Miliknya', 5 => 'Godaan Alat Serba Otomatis', 6 => 'Ujian Akhir: Laporan Rantai Lanjutan'],
             4 => [1 => 'Celah di Lapisan Cache', 2 => 'Injeksi Lewat Data yang Tampak Tidak Berbahaya', 3 => 'Celah yang Sudah Diperbaiki Sebagian', 4 => 'Serangan Berantai Antar-Layanan', 5 => 'False Positive yang Disengaja', 6 => 'Celah di Fitur Aman Buatan Sendiri', 7 => 'Ujian Akhir: Dua Laporan Mirip, Satu Palsu'],
+            5 => [1 => 'Second-Order SQLi di Profil Pengguna', 2 => 'WAF Bypass via Encoding', 3 => 'OOB-SQLi via DNS Exfiltration', 4 => 'Injeksi pada Prosedur Tersimpan', 5 => 'Data Breach Containment', 6 => 'Audit Kode Otomatis & Remediasi', 7 => 'Ujian Akhir: Integritas Data Maksimal'],
         ],
         'auth' => [
             3 => [1 => 'Pengintaian Rantai Kepercayaan', 2 => 'Rantai Kepercayaan Pihak Ketiga', 3 => 'Token yang Dipakai Ulang', 4 => 'Serangan di Tengah Jalan', 5 => 'Eskalasi dari Akses Terbatas ke Akses Penuh', 6 => 'Ujian Akhir: Laporan Arsitektur Kepercayaan'],
             4 => [1 => 'Pengintaian Kebijakan Pemulihan Akun', 2 => 'Token Palsu yang Terlihat Sah', 3 => 'Pembajakan Sesi via Perangkat yang Dipercaya', 4 => 'Serangan terhadap Mekanisme Ingat Saya', 5 => 'Penyamaran lewat Akun Dukungan Bayangan', 6 => 'Downgrade Diam-Diam', 7 => 'Ujian Akhir: Permintaan Akses Darurat yang Ambigu'],
+            5 => [1 => 'SAML/SSO Identity Provider Attack', 2 => 'Broken Object Level Authorization (BOLA)', 3 => 'JWT Header Manipulation', 4 => 'Privilege Escalation via IDOR', 5 => 'Session Fixation & Fix', 6 => 'Zero Trust Architecture Implementation', 7 => 'Ujian Akhir: Gerbang Utama Tak Terbobol'],
         ],
     ];
 
