@@ -1,8 +1,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@700;800&family=Nunito:wght@700;800&family=Space+Mono:wght@400;700&display=swap');
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
+@config "../../tailwind.config.js";
+@custom-variant dark (&:where(.dark, .dark *));
+
+@source "../views";
+@source "../js";
+
+@utility cat-btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition;
+}
 /*
 |--------------------------------------------------------------------------
 | Design Tokens "Security Cat" (dimigrasi dari tailwind.config inline
@@ -102,10 +109,6 @@
 
     .cat-label {
         @apply font-mono text-[11px] uppercase tracking-wider text-[#8b98ab];
-    }
-
-    .cat-btn {
-        @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition;
     }
 
     .cat-btn-primary {

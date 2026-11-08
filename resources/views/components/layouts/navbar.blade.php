@@ -19,6 +19,22 @@
     $user = auth()->user();
     $progression = $user ? $user->progression() : null;
     $badgeLabels = ['beginner' => 'Pemula', 'suhu' => 'Suhu Sandbox'];
+    
+    $isAdmin = $user && $user->role === 'admin';
+
+    if ($isAdmin) {
+        // Di halaman pengguna, "Home" tetap ke tampilan pengguna (bukan terlempar ke panel admin)
+        if (! $isLanding) {
+            $links = array_map(
+                fn ($link) => $link['label'] === 'Home'
+                    ? array_merge($link, ['href' => route('dashboard', ['as' => 'user'])])
+                    : $link,
+                $links
+            );
+        }
+
+        $links[] = ['label' => 'Panel Admin', 'href' => route('admin.dashboard'), 'active' => request()->routeIs('admin.*')];
+    }
 @endphp
 
 <header class="sticky top-0 z-50 animate-enter-nav backdrop-blur-xl" style="background:rgba(7,11,20,0.82);border-bottom:3px solid #233044;box-shadow:0 8px 24px rgba(0,0,0,0.35)">
@@ -108,6 +124,11 @@
 
                         {{-- Menu --}}
                         <div class="border-t border-[#233044] p-1.5">
+                                                        @if ($isAdmin)
+                                <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-[#00e5ff] transition hover:bg-white/5">
+                                    <x-icon name="shield-check" class="size-4" /> Panel Admin
+                                </a>
+                            @endif
                             <a href="{{ route('profile.edit') }}" class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-200 transition hover:bg-white/5">
                                 <x-icon name="user" class="size-4 text-[#8b98ab]" /> Profil
                             </a>
