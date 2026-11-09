@@ -419,4 +419,8 @@ export default function LearningIndex() {
       </div>
     </>
   );
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 88ed6fc082a3a17b2c8fe1a43c7d36badf933bb7

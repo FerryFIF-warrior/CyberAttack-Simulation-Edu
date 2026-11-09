@@ -15,16 +15,16 @@ class PagesTest extends TestCase
     {
         $this->get(route('landing'))
             ->assertOk()
-            ->assertSee('Skenario Edukasi Keamanan Siber')
+            ->assertSee('Empat jalur serangan')
             ->assertSee('Phishing Detection Lab');
     }
 
-    public function test_about_page_renders_under_construction_notice(): void
+    public function test_about_page_renders_developer_profiles(): void
     {
         $this->get(route('about'))
             ->assertOk()
-            ->assertSee('Halaman About Segera Hadir')
-            ->assertSee('Dalam Pengembangan');
+            ->assertSee('Tacet Discord')
+            ->assertSee('Abel Voura Ghea Adefika');
     }
 
     public function test_learning_page_renders_under_construction_notice(): void
