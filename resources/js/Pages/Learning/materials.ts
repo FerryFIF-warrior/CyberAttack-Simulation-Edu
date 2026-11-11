@@ -327,8 +327,4 @@ export const modules: LearningModule[] = [
       { id: "belguechi", cite: "Belguechi & Rosenberger, 2025", title: "Mitigate authentication attack risk on cancelable biometrics by leveraging attacker knowledge", venue: "EURASIP J. Information Security", note: "Mitigasi similarity-based attack pada biometrik yang dapat dibatalkan." },
     ],
   },
-<<<<<<< HEAD
 ];
-=======
-];
->>>>>>> 88ed6fc082a3a17b2c8fe1a43c7d36badf933bb7

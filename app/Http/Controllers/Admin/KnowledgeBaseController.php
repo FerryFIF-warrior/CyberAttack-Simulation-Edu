@@ -3,100 +3,106 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Client\PendingRequest;
+use App\Services\AiClient;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
 use Inertia\Inertia;
 use Inertia\Response;
 
-/**
- * Jembatan Laravel -> AI Service (Flask) untuk FR-16.
- * Dokumen dan embedding disimpan di AI Service, bukan di MySQL.
- * API key hanya ada di backend (.env), tidak pernah dikirim ke browser (NFR-04).
- *
- * Kontrak endpoint yang diharapkan dari AI Service:
- *   GET    /documents        -> {"documents":[{"id","title","source","status","chunks","created_at"}]}
- *   POST   /documents        -> body {title, source, content}
- *   DELETE /documents/{id}
- *   POST   /index            -> memulai proses indexing ulang
- */
 class KnowledgeBaseController extends Controller
 {
-    private function configured(): bool
+    public function index(AiClient $aiClient): Response
     {
-        return filled(env('AI_SERVICE_URL'));
+        $documents = $aiClient->documents();
+        $health = $aiClient->health();
+
+        return Inertia::render('Admin/KnowledgeBase/Index', [
+            'documents' => $documents['documents'],
+            'aiError' => $documents['error'],
+            'health' => $health,
+        ]);
     }
 
-    private function client(): PendingRequest
+    public function store(Request $request, AiClient $aiClient): JsonResponse|RedirectResponse
     {
-        return Http::baseUrl(rtrim((string) env('AI_SERVICE_URL'), '/'))
-            ->withHeaders(['X-API-Key' => (string) env('AI_SERVICE_KEY', '')])
-            ->acceptJson()
-            ->timeout(5);
-    }
-
-    public function index(): Response
-    {
-        $connected = false;
-        $message = null;
-        $documents = [];
-
-        if (! $this->configured()) {
-            $message = 'AI_SERVICE_URL belum diisi di file .env.';
-        } else {
-            try {
-                $res = $this->client()->get('/documents');
-                if ($res->successful()) {
-                    $connected = true;
-                    $documents = $res->json('documents') ?? [];
-                } else {
-                    $message = 'AI Service membalas dengan status ' . $res->status() . '.';
-                }
-            } catch (\Throwable $e) {
-                $message = 'AI Service tidak dapat dihubungi. Materi dan simulator tetap berfungsi.';
-            }
-        }
-
-        return Inertia::render('Admin/KnowledgeBase', compact('connected', 'message', 'documents'));
-    }
-
-    public function store(Request $request): RedirectResponse
-    {
-        $data = $request->validate([
-            'title' => ['required', 'string', 'max:200'],
-            'source' => ['nullable', 'string', 'max:200'],
-            'content' => ['required', 'string'],
+        $validated = $request->validate([
+            'judul' => ['required', 'string', 'max:200'],
+            'sumber' => ['required', 'string', 'max:200'],
+            'teks' => ['required', 'string', 'min:20', 'max:500000'],
         ]);
 
-        return $this->forward(fn () => $this->client()->post('/documents', $data), 'Gagal menambahkan dokumen.');
-    }
+        $result = $aiClient->ingest(
+            $validated['judul'],
+            $validated['sumber'],
+            $validated['teks'],
+        );
 
-    public function destroy(string $id): RedirectResponse
-    {
-        return $this->forward(fn () => $this->client()->delete('/documents/' . $id), 'Gagal menghapus dokumen.');
-    }
-
-    public function reindex(): RedirectResponse
-    {
-        return $this->forward(fn () => $this->client()->post('/index'), 'Gagal memulai indexing.');
-    }
-
-    private function forward(callable $call, string $failMessage): RedirectResponse
-    {
-        if (! $this->configured()) {
-            return back()->withErrors(['service' => 'AI_SERVICE_URL belum diisi di file .env.']);
-        }
-
-        try {
-            $res = $call();
-            if (! $res->successful()) {
-                return back()->withErrors(['service' => $failMessage . ' (status ' . $res->status() . ')']);
+        if ($result['error'] !== null) {
+            if ($this->wantsJson($request)) {
+                return response()->json(['message' => $result['error']], 502);
             }
-        } catch (\Throwable $e) {
-            return back()->withErrors(['service' => 'AI Service tidak dapat dihubungi.']);
+
+            return back()->with('error', $result['error']);
         }
 
-        return back();
+        $message = "Dokumen ter-index menjadi {$result['chunk_count']} chunk.";
+
+        if ($this->wantsJson($request)) {
+            return response()->json([
+                'id' => $result['id'],
+                'chunk_count' => $result['chunk_count'],
+            ], 201);
+        }
+
+        return back()->with('status', $message);
+    }
+
+    public function destroy(Request $request, string $documentId, AiClient $aiClient): JsonResponse|RedirectResponse
+    {
+        $result = $aiClient->deleteDocument($documentId);
+
+        if ($result['error'] !== null) {
+            if ($this->wantsJson($request)) {
+                return response()->json(['message' => $result['error']], 502);
+            }
+
+            return back()->with('error', $result['error']);
+        }
+
+        if ($this->wantsJson($request)) {
+            return response()->json(['deleted' => $result['deleted']]);
+        }
+
+        return back()->with('status', 'Dokumen knowledge base dihapus.');
+    }
+
+    public function reindex(Request $request, AiClient $aiClient): JsonResponse|RedirectResponse
+    {
+        $result = $aiClient->reindex();
+
+        if ($result['error'] !== null) {
+            if ($this->wantsJson($request)) {
+                return response()->json(['message' => $result['error']], 502);
+            }
+
+            return back()->with('error', $result['error']);
+        }
+
+        $message = "{$result['indexed']} dokumen di-index ulang ({$result['total_chunks']} chunk).";
+
+        if ($this->wantsJson($request)) {
+            return response()->json([
+                'indexed' => $result['indexed'],
+                'total_chunks' => $result['total_chunks'],
+            ]);
+        }
+
+        return back()->with('status', $message);
+    }
+
+    private function wantsJson(Request $request): bool
+    {
+        return $request->wantsJson() && ! $request->header('X-Inertia');
     }
 }

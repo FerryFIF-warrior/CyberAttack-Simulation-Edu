@@ -1,10 +1,10 @@
 <?php
 
-use App\Http\Controllers\Api\ChatMessageController;
 use App\Http\Controllers\Admin\ContentController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\KnowledgeBaseController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
+use App\Http\Controllers\Api\ChatMessageController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ChatAIController;
@@ -21,7 +21,7 @@ use Inertia\Inertia;
 Route::get('/', LandingController::class)->name('landing');
 
 Route::view('/about', 'about')->name('about');
-Route::get('/learning', fn () => \Inertia\Inertia::render('Learning/Index'))->name('learning');
+Route::get('/learning', fn () => Inertia::render('Learning/Index'))->name('learning');
 
 Route::middleware('guest')->group(function () {
     Route::get('login', [LoginController::class, 'create'])->name('login');
@@ -36,7 +36,6 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', DashboardController::class)->name('dashboard');
     Route::get('/security-log', SecurityLogController::class)->name('security-log');
     Route::get('/dashboard', DashboardController::class)
         ->middleware(RedirectAdminToPanel::class)
@@ -86,13 +85,8 @@ Route::middleware(['auth', EnsureUserIsAdmin::class])
         Route::post('/content/{resource}', [ContentController::class, 'store'])->where('resource', 'materi|kuis|badge')->name('content.store');
         Route::put('/content/{resource}/{id}', [ContentController::class, 'update'])->where('resource', 'materi|kuis|badge')->name('content.update');
         Route::delete('/content/{resource}/{id}', [ContentController::class, 'destroy'])->where('resource', 'materi|kuis|badge')->name('content.destroy');
-                   Route::get('/content/materi/{id}/document', [ContentController::class, 'document'])->whereNumber('id')->name('content.document');
+        Route::get('/content/materi/{id}/document', [ContentController::class, 'document'])->whereNumber('id')->name('content.document');
 
-        // Knowledge base AI (FR-16)
-        Route::get('/knowledge-base', [KnowledgeBaseController::class, 'index'])->name('kb.index');
-        Route::post('/knowledge-base', [KnowledgeBaseController::class, 'store'])->name('kb.store');
-        Route::post('/knowledge-base/reindex', [KnowledgeBaseController::class, 'reindex'])->name('kb.reindex');
-        Route::delete('/knowledge-base/{id}', [KnowledgeBaseController::class, 'destroy'])->where('id', '[A-Za-z0-9_-]+')->name('kb.destroy');
     });
 
 require __DIR__.'/auth.php';

@@ -27,12 +27,11 @@ class PagesTest extends TestCase
             ->assertSee('Abel Voura Ghea Adefika');
     }
 
-    public function test_learning_page_renders_under_construction_notice(): void
+    public function test_learning_page_renders(): void
     {
         $this->get(route('learning'))
             ->assertOk()
-            ->assertSee('Halaman Alur Belajar Segera Hadir')
-            ->assertSee('Dalam Pengembangan');
+            ->assertInertia(fn (Assert $page) => $page->component('Learning/Index'));
     }
 
     public function test_dashboard_page_renders(): void
